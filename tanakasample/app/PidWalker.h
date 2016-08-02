@@ -6,6 +6,7 @@
 #include "Clock.h"
 #include "Walker.h"
 #include "pid.h"
+#include "self_localization.h"
 
 using namespace ev3api;
 
@@ -16,6 +17,7 @@ public:
 
 private:
   Walker walker;
+    Self_localization self_localization;
   ColorSensor colorSensor;
   SonarSensor sonarSensor;
   Clock clock;
