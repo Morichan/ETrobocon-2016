@@ -3,7 +3,7 @@
 #include "app.h"
 
 Flagman::Flagman():
-    touchSensor(PORT_1) {
+    touchSensor(PORT_1), sonarSensor(PORT_3) {
 }
 
 void Flagman::startingWait() {
@@ -19,5 +19,15 @@ void Flagman::startingWait() {
 
         clock.sleep(20);
     }
+}
+
+bool Flagman::rewardModeFlag() {
+    bool flag = false;
+
+    if(sonarSensor.getDistance() < 30) {
+        flag = true;
+    }
+
+    return flag;
 }
 

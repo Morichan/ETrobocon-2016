@@ -25,6 +25,7 @@
 #include "PidWalker.h"
 #include "Lifter.h"
 #include "Emoter.h"
+#include "ColorChecker.h"
 
 #if defined(BUILD_MODULE)
 #include "module_cfg.h"
@@ -45,12 +46,14 @@ Flagman* flagman;
 PidWalker* pidWalker;
 Lifter* lifter;
 Emoter* emoter;
+ColorChecker* colorChecker;
 
 void main_task(intptr_t unused) {
     pidWalker = new PidWalker();
     flagman = new Flagman();
     lifter = new Lifter();
     emoter = new Emoter();
+    colorChecker = new ColorChecker();
 
     /* LCD画面表示 */
     msg_f("ET-Robocon'16 tanakasample", 1);
@@ -76,16 +79,11 @@ void main_task(intptr_t unused) {
 
     /*---------------Main Task from Here ここから---------------*/
 
-    emoter->wipe(100, 5, 180); // 尾が速度100で5回、180度ワイプする
+    emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
     emoter->turn(100);         // 尾が速度100で回転する
-    lifter->liftUp();          // 手が上がる
-    lifter->liftDown();        // 手が下がる
-    lifter->defaultSet();      // 手を初期位置に置く
-    emoter->defaultSet(0);     // 尾を初期位置に置く
-    emoter->changeDefault(90); // 尾の初期位置を90度ずらす
-    emoter->changeDefault(90);
-    emoter->changeDefault(90);
-    // pidWalker->trace();        // PID（実質PD）制御でライントレースする
+    //pidWalker->trace();        // PID（実質PD）制御でライントレースする
+    colorChecker->checkBlockColor();
+    emoter->defaultSet(0);
 
     /*---------------Main Task upto Here ここまで---------------*/
 
@@ -93,6 +91,7 @@ void main_task(intptr_t unused) {
     emoter->terminate();
 
     msg_f("Reseted", 1);
+    msg_f("", 2);
     // ter_tsk(BT_TASK);         // Bluetooth通信タスクの停止
     fclose(bt);
 

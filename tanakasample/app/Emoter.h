@@ -1,3 +1,6 @@
+#ifndef __EMOTER__
+#define __EMOTER__
+
 #include "Motor.h"
 #include "Clock.h"
 
@@ -20,3 +23,6 @@ private:
   Motor tailHand;
   Clock clock;
 };
+
+
+#endif

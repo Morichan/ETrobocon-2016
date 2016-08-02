@@ -31,10 +31,15 @@ void Lifter::liftDown() {
     liftHand.setBrake(true);
 }
 
-void Lifter::defaultSet() {
+void Lifter::changeDefault(int angle) {
+    Lifter::defaultSet(angle);
+    Lifter::reset();
+}
+
+void Lifter::defaultSet(int angle) {
     int i = 0;
     for(i = 0; i < 300; i++) {
-        liftHand.setPWM(-liftHand.getCount());
+        liftHand.setPWM(-((liftHand.getCount() - angle) % 360));
         clock.sleep(1);
     }
     liftHand.setPWM(0);
