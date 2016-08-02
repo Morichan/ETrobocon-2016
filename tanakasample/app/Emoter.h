@@ -24,5 +24,4 @@ private:
   Clock clock;
 };
 
-
 #endif

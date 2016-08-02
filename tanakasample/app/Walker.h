@@ -3,7 +3,6 @@
 
 #include "Motor.h"
 #include "Clock.h"
-
 #include "util.h"
 
 using namespace ev3api;

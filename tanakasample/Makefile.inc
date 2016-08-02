@@ -10,7 +10,8 @@ Emoter.o \
 Lifter.o \
 Flagman.o \
 PidWalker.o \
-ColorChecker.o
+ColorChecker.o \
+Pedestrian.o
 
 SRCLANG := c++
 

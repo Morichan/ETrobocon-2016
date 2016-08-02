@@ -26,6 +26,7 @@
 #include "Lifter.h"
 #include "Emoter.h"
 #include "ColorChecker.h"
+#include "Pedestrian.h"
 
 #if defined(BUILD_MODULE)
 #include "module_cfg.h"
@@ -47,6 +48,7 @@ PidWalker* pidWalker;
 Lifter* lifter;
 Emoter* emoter;
 ColorChecker* colorChecker;
+Pedestrian* pedestrian;
 
 void main_task(intptr_t unused) {
     pidWalker = new PidWalker();
@@ -54,6 +56,7 @@ void main_task(intptr_t unused) {
     lifter = new Lifter();
     emoter = new Emoter();
     colorChecker = new ColorChecker();
+    pedestrian = new Pedestrian();
 
     /* LCD画面表示 */
     msg_f("ET-Robocon'16 tanakasample", 1);
@@ -84,6 +87,8 @@ void main_task(intptr_t unused) {
     //pidWalker->trace();        // PID（実質PD）制御でライントレースする
     colorChecker->checkBlockColor();
     emoter->defaultSet(0);
+    pedestrian->monitor();
+    pedestrian->cross();
 
     /*---------------Main Task upto Here ここまで---------------*/
 
