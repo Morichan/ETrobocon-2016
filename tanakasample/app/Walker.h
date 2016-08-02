@@ -1,5 +1,7 @@
-#include "Motor.h"
+#ifndef __WALKER__
+#define __WALKER__
 
+#include "Motor.h"
 #include "util.h"
 
 using namespace ev3api;
@@ -16,3 +18,6 @@ private:
   Motor leftWheel;
   Motor rightWheel;
 };
+
+
+#endif

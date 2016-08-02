@@ -1,3 +1,6 @@
+#ifndef __LIFTER__
+#define __LIFTER__
+
 #include "Motor.h"
 #include "Clock.h"
 
@@ -19,3 +22,6 @@ private:
   Motor liftHand;
   Clock clock;
 };
+
+
+#endif
