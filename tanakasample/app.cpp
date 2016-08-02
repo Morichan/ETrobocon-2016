@@ -81,8 +81,9 @@ void main_task(intptr_t unused) {
     emoter->reset();
 
     /*---------------Main Task from Here ここから---------------*/
-
     emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
+    //tachiyama参上
+    emoter->wipe(100, 5, 180); // 尾が速度100で5回、180度ワイプする
     emoter->turn(100);         // 尾が速度100で回転する
     //pidWalker->trace();        // PID（実質PD）制御でライントレースする
     colorChecker->checkBlockColor();
@@ -90,6 +91,9 @@ void main_task(intptr_t unused) {
     pedestrian->monitor();
     pedestrian->cross();
 
+
+
+	//sato sanjo
     /*---------------Main Task upto Here ここまで---------------*/
 
     lifter->terminate();
