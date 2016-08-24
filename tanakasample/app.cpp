@@ -49,6 +49,7 @@ Lifter* lifter;
 Emoter* emoter;
 ColorChecker* colorChecker;
 Pedestrian* pedestrian;
+Walker* walker;
 
 void main_task(intptr_t unused) {
     pidWalker = new PidWalker();
@@ -57,6 +58,7 @@ void main_task(intptr_t unused) {
     emoter = new Emoter();
     colorChecker = new ColorChecker();
     pedestrian = new Pedestrian();
+    walker = new Walker();
 
     /* LCD画面表示 */
     msg_f("ET-Robocon'16 tanakasample", 1);
@@ -82,18 +84,16 @@ void main_task(intptr_t unused) {
 
     /*---------------Main Task from Here ここから---------------*/
     emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
-    //tachiyama参上
-    emoter->wipe(100, 5, 180); // 尾が速度100で5回、180度ワイプする
     emoter->turn(100);         // 尾が速度100で回転する
+    walker->angleChange(360);
     //pidWalker->trace();        // PID（実質PD）制御でライントレースする
-    colorChecker->checkBlockColor();
-    emoter->defaultSet(0);
-    pedestrian->monitor();
-    pedestrian->cross();
+    // colorChecker->checkBlockColor();
+    // emoter->defaultSet(0);
+    // pedestrian->monitor();
+    // pedestrian->cross();
 
 
 
-	//sato sanjo
     /*---------------Main Task upto Here ここまで---------------*/
 
     lifter->terminate();

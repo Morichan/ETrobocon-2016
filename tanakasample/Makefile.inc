@@ -11,7 +11,8 @@ Lifter.o \
 Flagman.o \
 PidWalker.o \
 ColorChecker.o \
-Pedestrian.o
+Pedestrian.o \
+self_localization.o
 
 SRCLANG := c++
 

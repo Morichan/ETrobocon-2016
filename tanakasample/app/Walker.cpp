@@ -19,6 +19,14 @@ void Walker::reset() {
     rightWheel.reset();
 }
 
+void Walker::stop() {
+    run(0, 0);
+
+    msg_f("stopping...", 1);
+    leftWheel.reset();
+    rightWheel.reset();
+}
+
 void Walker::run(int8_t pwm, int8_t turn) {
     msg_f("running...", 1);
 
@@ -28,15 +36,42 @@ void Walker::run(int8_t pwm, int8_t turn) {
     rightWheel.setPWM((pwm + turn) * leftRight);
 }
 
+int32_t Walker::get_count_L() {
+    return leftWheel.getCount();
+}
+
+int32_t Walker::get_count_R() {
+    return rightWheel.getCount();
+}
+
 void Walker::edgeChange() {
     if(leftRight == 1) {
-        run(0, 50);
+        run(0, 5);
         clock.sleep(100);
         leftRight = -1;
     } else {
-        run(0, -50);
+        run(0, 5);
         clock.sleep(100);
         leftRight = 1;
     }
+}
+
+void Walker::angleChange(int angle) {
+    int32_t defaultAngleL, defaultAngleR;
+
+    angle -= angle % 45;
+    angle /= 45;
+
+    defaultAngleL = leftWheel.getCount();
+    defaultAngleR = rightWheel.getCount();
+
+    while(1) {
+        run(0, 10);
+        if(rightWheel.getCount() - defaultAngleL > 73 * angle) {
+            break;
+        }
+        clock.sleep(4);
+    }
+    stop();
 }
 

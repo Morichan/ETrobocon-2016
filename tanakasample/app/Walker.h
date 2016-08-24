@@ -10,8 +10,12 @@ using namespace ev3api;
 class Walker {
 public:
   Walker();
+  void stop();
   void run(int8_t pwm, int8_t turn);
   void edgeChange();
+  void angleChange(int angle);
+  int32_t get_count_L();
+  int32_t get_count_R();
   void init();
   void terminate();
   void reset();

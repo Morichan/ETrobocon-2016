@@ -25,7 +25,7 @@ void Pedestrian::cross(){
 		walker.run(30,0);
 		clock.sleep(2000);
 		walker.run(0,0);
-		lifter.defaultSet();
+		lifter.defaultSet(0);
 		flag=2;
 	}else{
 		while(1){
