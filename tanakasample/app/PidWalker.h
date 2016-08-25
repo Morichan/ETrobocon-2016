@@ -5,6 +5,7 @@
 #include "SonarSensor.h"
 #include "Clock.h"
 #include "Walker.h"
+#include "Emoter.h"
 #include "pid.h"
 #include "self_localization.h"
 
@@ -17,6 +18,7 @@ public:
 
 private:
   Walker walker;
+  Emoter emoter;
     Self_localization self_localization;
   ColorSensor colorSensor;
   SonarSensor sonarSensor;

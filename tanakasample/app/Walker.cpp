@@ -44,16 +44,23 @@ int32_t Walker::get_count_R() {
     return rightWheel.getCount();
 }
 
-void Walker::edgeChange() {
+/*
+ * エッジ切り替え
+ * なんかよくわからん動作しだした
+ * 最初は右エッジ
+ */
+int Walker::edgeChange() {
     if(leftRight == 1) {
-        run(20, -10);
+        run(10, 10);
         clock.sleep(20);
         leftRight = -1;
     } else {
-        run(20, 10);
+        run(10, 10);
         clock.sleep(20);
         leftRight = 1;
     }
+
+    return leftRight;
 }
 
 void Walker::angleChange(int angle, int rotation) {
@@ -62,7 +69,7 @@ void Walker::angleChange(int angle, int rotation) {
     if(rotation >= 0) {
         rotation = 1;
     } else {
-        rotation -1;
+        rotation = -1;
     }
 
     angle -= angle % 45;

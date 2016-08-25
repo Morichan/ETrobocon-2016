@@ -6,11 +6,12 @@
 
 /* default pid(2.0, 0.05, 0.13, 20.0) */
 PidWalker::PidWalker():
-    colorSensor(PORT_2), sonarSensor(PORT_3), pid(0.5, 0.0, 0.8, border) {
+    colorSensor(PORT_2), sonarSensor(PORT_3), pid(0.5, 0.0, 2.0, border) {
 }
 
 /* forward=50, pid(1.0, 0.0, 11.0, border=30) */
 void PidWalker::trace() {
+    int emoterFlag = 1;
 
     /* 両輪のリセット */
     walker.reset();
@@ -23,7 +24,12 @@ void PidWalker::trace() {
             break;
         }
         if(sonarSensor.getDistance() < 10) {
-            walker.edgeChange();
+            emoterFlag = walker.edgeChange();
+            if(emoterFlag == 1) {
+                emoter.changeDefault(180);
+            } else {
+                emoter.changeDefault(-180);
+            }
         }
 
         brightness = colorSensor.getBrightness();

@@ -85,6 +85,7 @@ void main_task(intptr_t unused) {
     /*---------------Main Task from Here ここから---------------*/
     emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
     emoter->turn(100);         // 尾が速度100で回転する
+    emoter->changeDefault(90);
     pidWalker->trace();        // PID（実質PD）制御でライントレースする
     // walker->angleChange(360);
     // colorChecker->checkBlockColor();
