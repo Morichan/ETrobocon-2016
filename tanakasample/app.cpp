@@ -83,20 +83,15 @@ void main_task(intptr_t unused) {
     emoter->reset();
 
     /*---------------Main Task from Here ここから---------------*/
+
+
     emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
     emoter->turn(100);         // 尾が速度100で回転する
-    // emoter->changeDefault(90);
     // pidWalker->trace();        // PID（実質PD）制御でライントレースする
-    walker->angleChange(120, 1);
-    lifter->liftUp();
-    walker->angleChange(120, 1);
-    lifter->defaultSet(0);
-    walker->angleChange(120, 1);
-    lifter->liftUp();
-    walker->angleChange(360, -1);
     // colorChecker->checkBlockColor();
+    walker->angleChange(360, -1);
     emoter->defaultSet(0);
-    lifter->liftDown();
+    lifter->liftUp();
     // pedestrian->monitor();
     // pedestrian->cross();
 
@@ -104,8 +99,8 @@ void main_task(intptr_t unused) {
 
     /*---------------Main Task upto Here ここまで---------------*/
 
-    emoter->defaultSet(0);
     lifter->defaultSet(0);
+    emoter->defaultSet(0);
     lifter->terminate();
     emoter->terminate();
 
