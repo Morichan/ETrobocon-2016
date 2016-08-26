@@ -70,9 +70,17 @@ void Walker::angleChange(int angle, int rotation) {
     int8_t dAngle = 75; // 45度におけるモーター回転数（床材によって変わる？）
 
     if(rotation >= 0) {
-        rotation = 1;
+        if(leftRight == 1) {
+            rotation = 1;
+        } else {
+            rotation = -1;
+        }
     } else {
-        rotation = -1;
+        if(leftRight == 1) {
+            rotation = -1;
+        } else {
+            rotation = 1;
+        }
     }
 
     /*
@@ -93,11 +101,13 @@ void Walker::angleChange(int angle, int rotation) {
     while(1) {
         run(0, 10 * rotation);
         if(rotation >= 0) {
-            if(leftWheel.getCount() - defaultAngleL < -dAngle * angle * rotation) {
+            if(leftWheel.getCount() - defaultAngleL < -dAngle * angle * rotation ||
+                leftWheel.getCount() - defaultAngleL > dAngle * angle * rotation) {
                 break;
             }
         } else {
-            if(leftWheel.getCount() - defaultAngleL > -dAngle * angle * rotation) {
+            if(leftWheel.getCount() - defaultAngleL > -dAngle * angle * rotation ||
+                leftWheel.getCount() - defaultAngleL < dAngle * angle * rotation) {
                 break;
             }
         }

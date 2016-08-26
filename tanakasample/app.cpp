@@ -89,6 +89,7 @@ void main_task(intptr_t unused) {
     emoter->turn(100);         // 尾が速度100で回転する
     // pidWalker->trace();        // PID（実質PD）制御でライントレースする
     // colorChecker->checkBlockColor();
+    walker->angleChange(360, 1);
     walker->angleChange(360, -1);
     emoter->defaultSet(0);
     lifter->liftUp();
