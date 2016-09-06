@@ -25,8 +25,10 @@
 #include "PidWalker.h"
 #include "Lifter.h"
 #include "Emoter.h"
+#include "PrizeArea.h"
 #include "ColorChecker.h"
 #include "Pedestrian.h"
+#include "SonarSensor.h"
 
 #if defined(BUILD_MODULE)
 #include "module_cfg.h"
@@ -47,9 +49,11 @@ Flagman* flagman;
 PidWalker* pidWalker;
 Lifter* lifter;
 Emoter* emoter;
+PrizeArea* prizeArea;
 ColorChecker* colorChecker;
 Pedestrian* pedestrian;
 Walker* walker;
+SonarSensor* sonarSensor;
 
 void main_task(intptr_t unused) {
     pidWalker = new PidWalker();
@@ -59,6 +63,8 @@ void main_task(intptr_t unused) {
     colorChecker = new ColorChecker();
     pedestrian = new Pedestrian();
     walker = new Walker();
+    prizeArea = new PrizeArea();
+    sonarSensor = new SonarSensor(PORT_3);
 
     /* LCD画面表示 */
     msg_f("ET-Robocon'16 tanakasample", 1);
@@ -86,11 +92,20 @@ void main_task(intptr_t unused) {
 
 
     emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
-    emoter->turn(100);         // 尾が速度100で回転する
-    // pidWalker->trace();        // PID（実質PD）制御でライントレースする
+    // emoter->turn(100);         // 尾が速度100で回転する
+    pidWalker->startDash(100);
+    while(1) {
+        pidWalker->trace();        // PID（実質PD）制御でライントレースする
+        if(ev3_button_is_pressed(BACK_BUTTON)) {
+            break;
+        }
+        if(sonarSensor->getDistance() < 10) {
+            break;
+        }
+    }
+    pidWalker->stop();
     // colorChecker->checkBlockColor();
-    walker->angleChange(360, 1);
-    walker->angleChange(360, -1);
+    prizeArea->getPrize();
     emoter->defaultSet(0);
     lifter->liftUp();
     // pedestrian->monitor();

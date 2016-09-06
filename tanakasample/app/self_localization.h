@@ -29,22 +29,36 @@ private:
     float turning_angle;
     float current_x, current_y, current_angle;
     float old_x, old_y, old_angle;
+    float standard_point_x,standard_point_y;/*基準となる座標*/
+    float origin_slope,origin_intercept;/*(基準点と現在地)傾きと切片*/
+    float target_slope,target_intercept;/*傾きと切片*/
+    float tortal_slope,tan_angle,radian_angle,subtraction_radian_angle,degree_angle;/*self_localization_turn_target_point*/
+    
     //target_x,target_y,target_radius,ev3_radius;//目的地指定用
     /*} self_localization;*/
     double sup_number;//後輪の誤差を減らすための補助数
   //member methods
 public:
-   
+    
     //Constructor
     Self_localization();
     //自己位置の計算
-    void self_localization_update();
+    void self_localization_update(int edge_direction);
     /*目的地の指定*/
     int self_localization_near_target_coordinates(float target_x, float target_y, float target_radius,
                                                   float ev3_radius);
+    /*①基準となる座標の指定*/
+    void self_localization_standard_point();
+    /*②(目的地)２点の座標から示される直線の傾きと切片を計算*/
+    void self_localization_slope_intercept(float target_x,float target_y);
+    /*目的地を向くための計算*/
+    int self_localization_turn_target_point();
+    
+    
     //ファイル書き出し
     void self_localization_writing_current_coordinates(FILE*);
     void self_localization_display_coordinates();
+    void self_localization_writing_direction(FILE*);
 private:
     //
     Walker walker_sl;

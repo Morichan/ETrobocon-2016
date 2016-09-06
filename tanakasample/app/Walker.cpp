@@ -59,6 +59,26 @@ int Walker::edgeChange() {
 }
 
 /*
+ * 車輪の回転角分だけ進む
+ */
+void Walker::moveAngle(int8_t pwm, int angle) {
+
+    leftWheel.reset();
+    rightWheel.reset();
+
+    leftWheel.setPWM(pwm);
+    rightWheel.setPWM(pwm);
+
+    while(1){
+        if(leftWheel.getCount() >= angle && rightWheel.getCount() >= angle ) break;
+        clock.sleep(4);
+    }
+
+    leftWheel.reset();
+    rightWheel.reset();
+}
+
+/*
  * 主機能:45度単位で回転
  * rotation = 1 -> 反時計回り, rotation = -1 -> 時計回り
  *

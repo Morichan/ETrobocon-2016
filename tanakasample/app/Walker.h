@@ -13,6 +13,7 @@ public:
   void stop();
   void run(int8_t pwm, int8_t turn);
   int edgeChange();
+  void moveAngle(int8_t pwm, int angle);
   void angleChange(int angle, int rotation);
   int32_t get_count_L();
   int32_t get_count_R();

@@ -17,6 +17,7 @@ private:
 public:
   //Constructor
   Pid(double p_gain,double i_gain,double d_gain,double target);
+  void setPid(double p_gain,double i_gain,double d_gain,double target);
   void pid_calculate(double light_value);
   double pid_get_output();
 private:

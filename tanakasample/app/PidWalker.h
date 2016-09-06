@@ -13,22 +13,26 @@ using namespace ev3api;
 
 class PidWalker {
 public:
-  PidWalker();
-  void trace();
+    PidWalker();
+    void start();
+    void stop();
+    void startDash(int8_t _forward);
+    void setForward(int8_t _forward);
+    void trace();
 
 private:
-  Walker walker;
-  Emoter emoter;
+    Walker walker;
+    Emoter emoter;
     Self_localization self_localization;
-  ColorSensor colorSensor;
-  SonarSensor sonarSensor;
-  Clock clock;
-  Pid pid;
-  int8_t forward;
-  int8_t turn = 0;
-  int8_t border = 30;
-  int8_t brightness;
-  int8_t speedometer;
+    ColorSensor colorSensor;
+    SonarSensor sonarSensor;
+    Clock clock;
+    Pid pid;
+    int8_t forward = 25;
+    int8_t turn = 0;
+    int8_t border = 30;
+    int8_t brightness;
+    int8_t speedometer;
 };
 
 

@@ -9,6 +9,7 @@ pid.o \
 Emoter.o \
 Lifter.o \
 Flagman.o \
+PrizeArea.o \
 PidWalker.o \
 ColorChecker.o \
 Pedestrian.o \
