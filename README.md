@@ -3,6 +3,8 @@
 こんにちは、Morichanです。
 ETrobocon2016で使われるであろうC++コードのサンプル、通称tanakasampleです。
 
+test
+
 ***
 
 # 更新履歴
