@@ -14,7 +14,6 @@ PidWalker.o \
 ColorChecker.o \
 Pedestrian.o \
 self_localization.o \
-
 area.o \
 area_control.o \
 area_method_startup.o \

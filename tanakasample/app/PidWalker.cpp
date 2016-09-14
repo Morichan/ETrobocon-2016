@@ -39,8 +39,8 @@ void PidWalker::startDash(int8_t _forward) {
 
         brightness = colorSensor.getBrightness();
 
-        pid.pid_calculate(brightness);
-        turn = (int8_t)pid.pid_get_output();
+        pid.calculate(brightness);
+        turn = (int8_t)pid.get_output();
 
         walker.run(forward, turn);
 
@@ -66,8 +66,8 @@ void PidWalker::trace() {
 
     brightness = colorSensor.getBrightness();
 
-    pid.pid_calculate(brightness);
-    turn = (int8_t)pid.pid_get_output();
+    pid.calculate(brightness);
+    turn = (int8_t)pid.get_output();
 
     walker.run(forward, turn);
 
