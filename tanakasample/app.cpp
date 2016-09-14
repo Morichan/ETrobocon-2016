@@ -112,6 +112,13 @@ void main_task(intptr_t unused) {
     // pedestrian->cross();
 
 
+    /**********/
+    /*Areaとcontrolをここで実行*/
+    //while (1)
+    //  area_control.update();
+    /**********/
+
+
 
     /*---------------Main Task upto Here ここまで---------------*/
 
