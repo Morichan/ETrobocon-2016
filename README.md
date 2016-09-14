@@ -5,11 +5,11 @@ ETrobocon2016で使われるであろうC++コードのサンプル、通称tana
 
 ***
 ## 担当箇所
-*area, area_control:立山
-*PrizeArea, ColorChecker, Flagman, Emoter, Lifter, PidWalker, Walker:森
-*Pedestrian:村上
-*self_localization:岩切
-*pid:去年の資産
+* area, area_control:立山
+* PrizeArea, ColorChecker, Flagman, Emoter, Lifter, PidWalker, Walker:森
+* Pedestrian:村上
+* self_localization:岩切
+* pid:去年の資産
 ***
 ### 更新履歴
 
