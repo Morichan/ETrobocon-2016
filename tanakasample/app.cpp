@@ -38,6 +38,12 @@
 
 using namespace ev3api;
 
+
+/**********/
+const Run_route COURSE = TEST;
+/**********/
+
+
 /* Bluetooth */
 int32_t      bt_cmd = 0;      /* Bluetoothコマンド */
 static FILE *bt = NULL;       /* Bluetoothファイルハンドル */
@@ -56,6 +62,10 @@ Walker* walker;
 SonarSensor* sonarSensor;
 
 void main_task(intptr_t unused) {
+
+  //Area_controlの生成
+  Area_control area_control(COURSE);
+
     pidWalker = new PidWalker();
     flagman = new Flagman();
     lifter = new Lifter();
