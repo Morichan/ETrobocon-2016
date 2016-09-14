@@ -4,7 +4,7 @@
 ETrobocon2016で使われるであろうC++コードのサンプル、通称tanakasampleです。
 
 test
-
+murakami
 ***
 
 # 更新履歴
