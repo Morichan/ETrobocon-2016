@@ -30,6 +30,9 @@
 #include "Pedestrian.h"
 #include "SonarSensor.h"
 
+#include "area_control.h"
+#include "area.h"
+
 #if defined(BUILD_MODULE)
 #include "module_cfg.h"
 #else
@@ -38,9 +41,15 @@
 
 using namespace ev3api;
 
+
+/**********/
+const Run_route COURSE = TEST;
+/**********/
+
+
 /* Bluetooth */
 int32_t      bt_cmd = 0;      /* Bluetoothコマンド */
-static FILE *bt = NULL;       /* Bluetoothファイルハンドル */
+FILE *bt = NULL;       /* Bluetoothファイルハンドル */
 
 /* 関数プロトタイプ宣言 */
 // void bt_task(intptr_t unused);
@@ -56,6 +65,10 @@ Walker* walker;
 SonarSensor* sonarSensor;
 
 void main_task(intptr_t unused) {
+
+  //Area_controlの生成
+  Area_control area_control(COURSE);
+
     pidWalker = new PidWalker();
     flagman = new Flagman();
     lifter = new Lifter();
@@ -110,6 +123,13 @@ void main_task(intptr_t unused) {
     lifter->liftUp();
     // pedestrian->monitor();
     // pedestrian->cross();
+
+
+    /**********/
+    /*Areaとcontrolをここで実行*/
+    //while (1)
+    //  area_control.update();
+    /**********/
 
 
 
