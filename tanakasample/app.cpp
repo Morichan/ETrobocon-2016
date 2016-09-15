@@ -30,6 +30,9 @@
 #include "Pedestrian.h"
 #include "SonarSensor.h"
 
+#include "area_control.h"
+#include "area.h"
+
 #if defined(BUILD_MODULE)
 #include "module_cfg.h"
 #else
@@ -46,7 +49,7 @@ const Run_route COURSE = TEST;
 
 /* Bluetooth */
 int32_t      bt_cmd = 0;      /* Bluetoothコマンド */
-static FILE *bt = NULL;       /* Bluetoothファイルハンドル */
+FILE *bt = NULL;       /* Bluetoothファイルハンドル */
 
 /* 関数プロトタイプ宣言 */
 // void bt_task(intptr_t unused);
