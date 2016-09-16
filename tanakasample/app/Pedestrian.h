@@ -23,7 +23,7 @@ public:
   void moveColor();
   void moveCross();
   void turnLine(int8_t direction);
-  void turnColor();
+  void turnColor(int8_t way);
 private:
 	int Distance=0;
 	SonarSensor sonarSensor;
