@@ -20,12 +20,14 @@ public:
 	void cross();
 	void sumou(int8_t target_color);
 	void push();
+  void moveColor();
+  void moveCross();
+  void turnLine(int8_t direction);
+  void turnColor(int8_t way);
 private:
-	int flag=0;
 	int Distance=0;
 	SonarSensor sonarSensor;
 	ColorSensor colorSensor;
-	TouchSensor touchSensor;
 	Clock clock;
 	Walker walker;
 	Lifter lifter;
