@@ -15,7 +15,7 @@ void PrizeArea::carryPrize() {
     clock.sleep(1320);
     walker.stop();
     emoter.turn(100);
-    walker.run(80, 20);
-    clock.sleep(5500);
+    walker.run(90, 10);
+    clock.sleep(6000);
 }
 

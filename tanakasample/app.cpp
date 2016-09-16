@@ -106,14 +106,14 @@ void main_task(intptr_t unused) {
 
     emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
     // emoter->turn(100);         // 尾が速度100で回転する
-    pidWalker->startDash(70);
+    pidWalker->accelerate(0, 70);
     while(1) {
         pidWalker->trace();        // PID（実質PD）制御でライントレースする
         if(ev3_button_is_pressed(BACK_BUTTON)) {
             break;
         }
         if(sonarSensor->getDistance() < 60) {
-            pidWalker->setForward(30);
+            pidWalker->brake(0, 10);
             if(sonarSensor->getDistance() < 10) {
                 pidWalker->stop();
                 emoter->defaultSet(0);
