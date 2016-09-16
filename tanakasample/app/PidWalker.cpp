@@ -7,7 +7,7 @@
 /* default pid(2.0, 0.05, 0.13, 20.0) */
 /* forward=50, pid(1.0, 0.0, 11.0, border=30) */
 PidWalker::PidWalker():
-    colorSensor(PORT_2), sonarSensor(PORT_3), pid(0.5, 0.0, 2.0, border) {
+    colorSensor(PORT_2), sonarSensor(PORT_3), pid(1.0, 0.0, 8.0, border) {
 }
 
 void PidWalker::start() {
@@ -39,8 +39,8 @@ void PidWalker::startDash(int8_t _forward) {
 
         brightness = colorSensor.getBrightness();
 
-        pid.pid_calculate(brightness);
-        turn = (int8_t)pid.pid_get_output();
+        pid.calculate(brightness);
+        turn = (int8_t)pid.get_output();
 
         walker.run(forward, turn);
 
@@ -66,8 +66,8 @@ void PidWalker::trace() {
 
     brightness = colorSensor.getBrightness();
 
-    pid.pid_calculate(brightness);
-    turn = (int8_t)pid.pid_get_output();
+    pid.calculate(brightness);
+    turn = (int8_t)pid.get_output();
 
     walker.run(forward, turn);
 

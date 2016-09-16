@@ -30,6 +30,9 @@
 #include "Pedestrian.h"
 #include "SonarSensor.h"
 
+#include "area_control.h"
+#include "area.h"
+
 #if defined(BUILD_MODULE)
 #include "module_cfg.h"
 #else
@@ -38,9 +41,15 @@
 
 using namespace ev3api;
 
+
+/**********/
+const Run_route COURSE = TEST;
+/**********/
+
+
 /* Bluetooth */
 int32_t      bt_cmd = 0;      /* Bluetoothコマンド */
-static FILE *bt = NULL;       /* Bluetoothファイルハンドル */
+FILE *bt = NULL;       /* Bluetoothファイルハンドル */
 
 /* 関数プロトタイプ宣言 */
 // void bt_task(intptr_t unused);
@@ -56,6 +65,10 @@ Walker* walker;
 SonarSensor* sonarSensor;
 
 void main_task(intptr_t unused) {
+
+  //Area_controlの生成
+  Area_control area_control(COURSE);
+
     pidWalker = new PidWalker();
     flagman = new Flagman();
     lifter = new Lifter();
@@ -90,27 +103,36 @@ void main_task(intptr_t unused) {
     walker->reset();
     /*---------------Main Task from Here ここから---------------*/
 
+    emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
 
-//    emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
-//    emoter->turn(100);         // 尾が速度100で回転する
-//    pidWalker->startDash(100);
-//    while(1) {
-//        pidWalker->trace();        // PID（実質PD）制御でライントレースする
-//        if(ev3_button_is_pressed(BACK_BUTTON)) {
-//            break;
-//        }
-//        if(sonarSensor->getDistance() < 10) {
-//            break;
-//        }
-//    }
-//    pidWalker->stop();
-//    colorChecker->checkBlockColor();
-//    prizeArea->getPrize();
-//    emoter->defaultSet(0);
-//    lifter->liftUp();
-      pedestrian->monitor();
-      pedestrian->cross();
-      pedestrian->sumou(4);
+    pedestrian->monitor();
+    pedestrian->cross();
+    pedestrian->sumou(4);
+
+    pidWalker->startDash(70);
+    while(1) {
+        pidWalker->trace();        // PID（実質PD）制御でライントレースする
+        if(ev3_button_is_pressed(BACK_BUTTON)) {
+            break;
+        }
+        if(sonarSensor->getDistance() < 10) {
+            break;
+        }
+    }
+    pidWalker->stop();
+    // colorChecker->checkBlockColor();
+    prizeArea->getPrize();
+    emoter->defaultSet(0);
+    lifter->liftUp();
+    // pedestrian->monitor();
+    // pedestrian->cross();
+
+    /**********/
+    /*Areaとcontrolをここで実行*/
+    //while (1)
+    //  area_control.update();
+    /**********/
+
 
 
     /*---------------Main Task upto Here ここまで---------------*/
