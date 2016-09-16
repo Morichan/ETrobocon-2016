@@ -66,8 +66,8 @@ SonarSensor* sonarSensor;
 
 void main_task(intptr_t unused) {
 
-  //Area_controlの生成
-  Area_control area_control(COURSE);
+    //Area_controlの生成
+    Area_control area_control(COURSE);
 
     pidWalker = new PidWalker();
     flagman = new Flagman();
@@ -109,21 +109,25 @@ void main_task(intptr_t unused) {
     pedestrian->cross();
     pedestrian->sumou(4);
 
-    pidWalker->startDash(70);
+    pidWalker->accelerate(0, 70);
+
     while(1) {
         pidWalker->trace();        // PID（実質PD）制御でライントレースする
         if(ev3_button_is_pressed(BACK_BUTTON)) {
             break;
         }
-        if(sonarSensor->getDistance() < 10) {
-            break;
+        if(sonarSensor->getDistance() < 60) {
+            pidWalker->brake(0, 10);
+            if(sonarSensor->getDistance() < 10) {
+                pidWalker->stop();
+                emoter->defaultSet(0);
+                prizeArea->getPrize();
+                prizeArea->carryPrize();
+                break;
+            }
         }
     }
-    pidWalker->stop();
-    // colorChecker->checkBlockColor();
-    prizeArea->getPrize();
-    emoter->defaultSet(0);
-    lifter->liftUp();
+
     // pedestrian->monitor();
     // pedestrian->cross();
 
@@ -137,6 +141,7 @@ void main_task(intptr_t unused) {
 
     /*---------------Main Task upto Here ここまで---------------*/
 
+    walker->stop();
     lifter->defaultSet(0);
     emoter->defaultSet(0);
     lifter->terminate();
