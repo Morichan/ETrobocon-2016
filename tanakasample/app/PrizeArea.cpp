@@ -6,16 +6,28 @@ void PrizeArea::getPrize() {
     clock.sleep(800);
     walker.stop();
     lifter.liftUp();
-    emoter.wipe(100, 4, 120);
+    emoter.wipe(100, 4, 60);
 }
 
 void PrizeArea::carryPrize() {
+    int32_t carryCount;
+    int32_t defaultWheelL;
+
+    // 90度回転する
     walker.angleChange(90, 1);
-    walker.run(80, 35);
-    clock.sleep(1320);
-    walker.stop();
+    // Goalをまっすぐ狙う
+    defaultWheelL = walker.get_count_L();
+    while(1) {
+        walker.run(80, 40);
+        if(walker.get_count_L() - defaultWheelL > 920) {
+            break;
+        }
+    }
+
+    // Goalまで全力疾走！
     emoter.turn(100);
-    walker.run(90, 10);
-    clock.sleep(6000);
+    for(carryCount = 0; carryCount < 1000; carryCount++) {
+        walker.runStraight(90);
+    }
 }
 

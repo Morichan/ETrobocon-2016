@@ -36,6 +36,46 @@ void Walker::run(int8_t pwm, int8_t turn) {
     rightWheel.setPWM(pwm + turn * leftRight);
 }
 
+void Walker::runStraight(int8_t pwm) {
+    msg_f("running straight...", 1);
+
+    int32_t wheelL, wheelR;
+
+    nowWheelL = get_count_L();
+    nowWheelR = get_count_R();
+
+    /*
+     * もしoldWheelLとoldWheelRのどちらかでも0なら、
+     * 初期値ということだから値をセットして今回は終わり
+     */
+    if(oldWheelL == 0 || oldWheelR == 0) {
+        oldWheelL = get_count_L();
+        oldWheelR = get_count_R();
+
+    } else {
+        wheelL = nowWheelL - oldWheelL;
+        wheelR = nowWheelR - oldWheelR;
+
+        if(pwm > 0) {
+            // 前に進む
+            if(wheelL > wheelR) {
+                straightTurn = wheelL - wheelR;
+            } else {
+                straightTurn = wheelR - wheelL;
+            }
+        } else {
+            // 後ろに戻る
+            if(wheelL > wheelR) {
+                straightTurn = wheelR - wheelL;
+            } else {
+                straightTurn = wheelL - wheelR;
+            }
+        }
+        run(pwm, straightTurn);
+    }
+    clock.sleep(4);
+}
+
 int32_t Walker::get_count_L() {
     return leftWheel.getCount();
 }
