@@ -24,8 +24,7 @@ void Pedestrian::monitor(){
   }
 }
 
-void Pedestrian::cross(){
-  int t_color=4;
+void Pedestrian::cross(int8_t t_color){
   pidWalker.setForward(20);
   moveColor();
   if(t_color==5){
@@ -36,7 +35,7 @@ void Pedestrian::cross(){
     walker.angleChange(120,-1);
     turnColor(1);
   }else{
-    walker.moveAngle(20,380);
+    walker.moveAngle(25,380);
     lifter.defaultSet(0);
   }
   pidWalker.setForward(10);
@@ -56,7 +55,7 @@ void Pedestrian::push(){
   walker.run(-20, 0);
 
   while(1){
-    if(walker.get_count_L() <= 130 && walker.get_count_R() <= -130) break;
+    if(walker.get_count_L() <= -130 && walker.get_count_R() <= -130) break;
     clock.sleep(4);
   }
   walker.reset();
@@ -115,7 +114,7 @@ void Pedestrian::turnColor(int8_t way){
 //-----------------------------------------------------
 
 void Pedestrian::sumou(int8_t target_color){
-  int count=0;
+  int count=0,turn=0;;
   msg_f("ETsumou",1);
   if(target_color == 2 || target_color == 5){
     if(target_color == 2){
@@ -125,9 +124,9 @@ void Pedestrian::sumou(int8_t target_color){
       moveColor();
       push();
       turnColor(1);
-      pidWalker.setForward(15);
+      pidWalker.setForward(10);
       moveCross();
-
+      pidWalker.setForward(15);
       walker.moveAngle(15,60);
       walker.angleChange(45,1);
       turnLine(1);
@@ -143,12 +142,16 @@ void Pedestrian::sumou(int8_t target_color){
       moveCross();
       walker.angleChange(85,-1);
       while(1){
-        walker.run(10,0);
+        walker.run(20,turn);
+        count++;
+        if(count>=100){
+          turn=1;
+        }
         if(colorSensor.getBrightness() <=40) break;
       }
     }
 
-    pidWalker.setForward(15);
+    pidWalker.setForward(10);
     msg_f("search green",2);
     moveCross();
     walker.moveAngle(20,40);
@@ -175,7 +178,7 @@ void Pedestrian::sumou(int8_t target_color){
     pidWalker.setForward(10);
     moveCross();
 
-    walker.moveAngle(20,60);
+    walker.moveAngle(20,70);
 
 
 
@@ -199,12 +202,16 @@ void Pedestrian::sumou(int8_t target_color){
     moveCross();
     walker.angleChange(85,-1);
     while(1){
-      walker.run(10,0);
+      count++;
+      walker.run(20,turn);
+      if(count>=100){
+        turn=1;
+      }
       if(colorSensor.getBrightness() <=40) break;
     }
 
 
-    pidWalker.setForward(15);
+    pidWalker.setForward(10);
     moveCross();
     if(target_color == 4){
       msg_f("search green",2);
@@ -247,8 +254,17 @@ void Pedestrian::sumou(int8_t target_color){
   walker.angleChange(45,1);
   turnLine(1);
   moveColor();
+  walker.angleChange(5,-1);
   walker.moveAngle(20,90);
-  pidWalker.setForward(25);
+  pidWalker.setForward(7);
+  count=0;
+  while(1){
+    pidWalker.trace();
+    count++;
+    if(count>=400) break;
+  }
+  count=0;
+  pidWalker.setForward(30);
   while(1){
     pidWalker.trace();
     count++;
