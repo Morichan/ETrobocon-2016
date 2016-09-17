@@ -30,6 +30,7 @@
 #include "Pedestrian.h"
 #include "SonarSensor.h"
 
+
 #if defined(BUILD_MODULE)
 #include "module_cfg.h"
 #else
@@ -40,7 +41,7 @@ using namespace ev3api;
 
 /* Bluetooth */
 int32_t      bt_cmd = 0;      /* Bluetoothコマンド */
-static FILE *bt = NULL;       /* Bluetoothファイルハンドル */
+FILE *bt = NULL;       /* Bluetoothファイルハンドル */
 
 /* 関数プロトタイプ宣言 */
 // void bt_task(intptr_t unused);
@@ -108,9 +109,10 @@ void main_task(intptr_t unused) {
 //    prizeArea->getPrize();
 //    emoter->defaultSet(0);
 //    lifter->liftUp();
+      colorChecker->hoshitori();
       pedestrian->monitor();
-      pedestrian->cross();
-      pedestrian->sumou(4);
+      pedestrian->cross(colorChecker->getColor());
+      pedestrian->sumou(colorChecker->getColor());
 
 
     /*---------------Main Task upto Here ここまで---------------*/

@@ -18,12 +18,12 @@ Self_localization::Self_localization(){
     //モータの角位置をゼロにリセットする
     walker_sl.reset();
     
-    self_localization_constructor_make();
+    constructor_make();
 
 }
 
 //wrapper
-void Self_localization::self_localization_constructor_make(){
+void Self_localization::constructor_make(){
     right_motor_current_angle = (float)walker_sl.get_count_R()/*ev3_motor_get_counts(1)*/;
     left_motor_current_angle = (float)walker_sl.get_count_L()/*ev3_motor_get_counts(2)*/;
     right_motor_old_angle = 0;
@@ -60,7 +60,7 @@ void Self_localization::self_localization_constructor_make(){
 }
 
 /*自己位置の値を更新*/
-void Self_localization::self_localization_update(int edge_direction){
+void Self_localization::update(int edge_direction){
     //rotation angle of right wheel
     
     old_x = current_x;
@@ -102,7 +102,7 @@ void Self_localization::self_localization_update(int edge_direction){
  ev3_radius:ev3の半径
  */
 
-int Self_localization::self_localization_near_target_coordinates(float target_x, float target_y, float target_radius,float ev3_radius){
+int Self_localization::near_target_coordinates(float target_x, float target_y, float target_radius,float ev3_radius){
     float distance_between_two_points =
     sqrt( pow((target_x - current_x), 2) + pow((target_y - current_y), 2));
     float total_of_two_radius = target_radius + ev3_radius;
@@ -126,7 +126,7 @@ int Self_localization::self_localization_near_target_coordinates(float target_x,
  degree_angle:Θの角度
  戻り値:現在地から目的地に行くための角度を求める
  */
-int Self_localization::self_localization_turn_target_point(){
+int Self_localization::turn_target_point(){
    tortal_slope  = origin_slope * target_slope;
     if(tortal_slope == -1){
         /*積が-1であった場合に90°である*/
@@ -157,7 +157,7 @@ int Self_localization::self_localization_turn_target_point(){
  origin_slope:傾き(float)
  origin_intercept:切片(float)
  */
-void Self_localization::self_localization_slope_intercept(float target_x,float target_y){
+void Self_localization::slope_intercept(float target_x,float target_y){
     
     /*基準点と現在地*/
     /*傾きを求める*/
@@ -188,7 +188,7 @@ void Self_localization::self_localization_slope_intercept(float target_x,float t
  standard_point_x:基準点のx座標
  standard_point_y:基準点のy座標
  */
-void Self_localization::self_localization_standard_point(){
+void Self_localization::standard_point(){
 
     if (pow((current_x - standard_point_x),2.0) + pow((current_y - standard_point_y),2.0) > 20){
         standard_point_x = current_x;
@@ -198,7 +198,7 @@ void Self_localization::self_localization_standard_point(){
 }
 
 /*ディスプレイ表示用*/
-void Self_localization::self_localization_display_coordinates(){
+void Self_localization::display_coordinates(){
     char str[40];
     sprintf(str, "X:%f Y:%f", current_x, current_y);
     ev3_lcd_draw_string(str, 0, 50);
@@ -206,7 +206,7 @@ void Self_localization::self_localization_display_coordinates(){
 
 
 //ファイル書き込み用
-void Self_localization::self_localization_writing_current_coordinates(FILE* fp) {
+void Self_localization::writing_current_coordinates(FILE* fp) {
     
     fprintf(fp, "%f %f\n", current_x, current_y);
     

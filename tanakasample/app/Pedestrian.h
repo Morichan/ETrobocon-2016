@@ -17,7 +17,7 @@ public:
 	Pedestrian();
 	void init();
 	void monitor();
-	void cross();
+	void cross(int8_t t_color);
 	void sumou(int8_t target_color);
 	void push();
   void moveColor();
@@ -32,7 +32,6 @@ private:
 	Walker walker;
 	Lifter lifter;
 	PidWalker pidWalker;
-
 };
 
 #endif

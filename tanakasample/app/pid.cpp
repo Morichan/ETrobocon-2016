@@ -18,7 +18,7 @@ void Pid::wrapper_of_constructor(double _p_gain,double _i_gain,double _d_gain,
     output = _output;
     del = 1;
 }
-void Pid::pid_calculate(double light_value){
+void Pid::calculate(double light_value){
     double p,i,d;
     double diff = light_value - target;
     integral += (old_diff + diff)/2 * del;
@@ -28,10 +28,10 @@ void Pid::pid_calculate(double light_value){
     old_diff = diff;
     output = p + i + d;
 }
-double Pid::pid_get_output(){
+double Pid::get_output(){
     return output;
 }
-void Pid::pid_change_del(double next_del){
+void Pid::change_del(double next_del){
     del = next_del;
 }
 

@@ -13,7 +13,13 @@ PrizeArea.o \
 PidWalker.o \
 ColorChecker.o \
 Pedestrian.o \
-self_localization.o
+self_localization.o \
+area.o \
+area_control.o \
+area_method_startup.o \
+area_method_standard_run.o \
+area_method_finished.o
+
 
 SRCLANG := c++
 
