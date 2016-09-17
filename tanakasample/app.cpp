@@ -30,8 +30,6 @@
 #include "Pedestrian.h"
 #include "SonarSensor.h"
 
-#include "area_control.h"
-#include "area.h"
 
 #if defined(BUILD_MODULE)
 #include "module_cfg.h"
@@ -40,12 +38,6 @@
 #endif
 
 using namespace ev3api;
-
-
-/**********/
-const Run_route COURSE = TEST;
-/**********/
-
 
 /* Bluetooth */
 int32_t      bt_cmd = 0;      /* Bluetoothコマンド */
@@ -101,13 +93,17 @@ void main_task(intptr_t unused) {
     lifter->reset();
     emoter->reset();
     walker->reset();
+
     /*---------------Main Task from Here ここから---------------*/
+
+
 
     emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
 
+    colorChecker->hoshitori();
     pedestrian->monitor();
-    pedestrian->cross();
-    pedestrian->sumou(4);
+    pedestrian->cross(colorChecker->getColor());
+    pedestrian->sumou(colorChecker->getColor());
 
     pidWalker->accelerate(0, 70);
 
@@ -127,9 +123,6 @@ void main_task(intptr_t unused) {
             }
         }
     }
-
-    // pedestrian->monitor();
-    // pedestrian->cross();
 
     /**********/
     /*Areaとcontrolをここで実行*/
