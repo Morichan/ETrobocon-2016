@@ -12,6 +12,7 @@ $ ls
 README.md tanakasample Makefile tanakasample_cpp  
 $ make app=tanakasample  
 ```
+
 または、  
 
 ```
@@ -21,6 +22,7 @@ $ ls
 workspace beginner ETrobocon-2016  
 $ make app=ETrobocon-2016/tanakasample  
 ```
+
 ここで何もエラーが発生しなければapp実行ファイルができます。  
 それを任意の名前にするなり何なりして、HackEVのsdカードに入れます。  
 下記の階層（appsディレクトリ内）にコピペしてください  
