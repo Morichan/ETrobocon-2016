@@ -51,8 +51,7 @@ int Walker::edgeChange() {
         leftRight = -1;
     } else {
         run(10, 5);
-        clock.sleep(10);
-        leftRight = 1;
+        clock.sleep(10);        leftRight = 1;
     }
 
     return leftRight;
@@ -133,6 +132,7 @@ void Walker::angleChange(int angle, int rotation) {
         }
         clock.sleep(4);
     }
+    
     stop();
 }
 

@@ -13,7 +13,6 @@ using namespace ev3api;
 class PrizeArea {
 public:
     void getPrize();
-    void carryPrize();
 
 private:
     Clock clock;

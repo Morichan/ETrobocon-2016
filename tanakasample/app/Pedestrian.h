@@ -17,13 +17,13 @@ public:
 	Pedestrian();
 	void init();
 	void monitor();
-	void cross(int8_t t_color);
+	void cross();
 	void sumou(int8_t target_color);
 	void push();
   void moveColor();
   void moveCross();
   void turnLine(int8_t direction);
-  void turnColor(int8_t way);
+  void turnColor();
 private:
 	int Distance=0;
 	SonarSensor sonarSensor;
@@ -32,6 +32,7 @@ private:
 	Walker walker;
 	Lifter lifter;
 	PidWalker pidWalker;
+
 };
 
 #endif
