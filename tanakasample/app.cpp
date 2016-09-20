@@ -60,6 +60,7 @@ SelfLocalMoving* selfLocalMoving;
 void main_task(intptr_t unused) {
 
     //Area_controlの生成
+    Area_control area_control(COURSE);
     // Area_control area_control(COURSE);
 
     pidWalker = new PidWalker();
@@ -101,36 +102,15 @@ void main_task(intptr_t unused) {
 
     emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
 
+    selfLocalMoving->moveLCourseStart();
+
     colorChecker->hoshitori();
+
     pedestrian->monitor();
     pedestrian->cross(colorChecker->getColor());
     pedestrian->sumou(colorChecker->getColor());
 
-    selfLocalMoving->moveLCourseStart();
-
-    // colorChecker->hoshitori();
-    // pedestrian->monitor();
-    // pedestrian->cross(colorChecker->getColor());
-    // pedestrian->sumou(colorChecker->getColor());
-
-    // pidWalker->accelerate(0, 70);
-
-    // while(1) {
-    //     pidWalker->trace();        // PID（実質PD）制御でライントレースする
-    //     if(ev3_button_is_pressed(BACK_BUTTON)) {
-    //         break;
-    //     }
-    //     if(sonarSensor->getDistance() < 60) {
-    //         pidWalker->brake(0, 10);
-    //         if(sonarSensor->getDistance() < 10) {
-    //             pidWalker->stop();
-    //             emoter->defaultSet(0);
-    //             prizeArea->getPrize();
-    //             prizeArea->carryPrize();
-    //             break;
-    //         }
-    //     }
-    // }
+    prizeArea->prizeMode();
 
     /**********/
     /*Areaとcontrolをここで実行*/

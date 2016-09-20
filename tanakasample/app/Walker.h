@@ -12,6 +12,7 @@ public:
   Walker();
   void stop();
   void run(int8_t pwm, int8_t turn);
+  void runStraight(int8_t pwm);
   int edgeChange();
   void moveAngle(int8_t pwm, int angle);
   void angleChange(int angle, int rotation);
@@ -26,6 +27,11 @@ private:
   Motor rightWheel;
   Clock clock;
   int8_t leftRight = 1; // 1 -> 右, -1 -> 左
+  int8_t straightTurn = 0;
+  int32_t nowWheelL = 0;
+  int32_t nowWheelR = 0;
+  int32_t oldWheelL = 0;
+  int32_t oldWheelR = 0;
 };
 
 
