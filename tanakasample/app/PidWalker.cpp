@@ -7,7 +7,7 @@
 /* default pid(2.0, 0.05, 0.13, 20.0) */
 /* forward=50, pid(1.0, 0.0, 11.0, border=30) */
 PidWalker::PidWalker():
-    colorSensor(PORT_2), sonarSensor(PORT_3), pid(0.5, 0.0, 5.0, border) {
+    colorSensor(PORT_2), sonarSensor(PORT_3), pid(0.5, 0.0, 2.0, border) {
 }
 
 void PidWalker::start() {
@@ -27,6 +27,9 @@ void PidWalker::stop() {
 void PidWalker::accelerate(int8_t startForward, int8_t _forward) {
     int32_t count = 0;
 
+    /*
+     * もしstartForward == 0なら、現在の速度から更に加速
+     */
     if(startForward != 0) {
         forward = startForward;
 

@@ -20,9 +20,9 @@ public:
     void brake(int8_t startForward, int8_t _forward);
     void setForward(int8_t _forward);
     void trace();
+    Walker walker;
 
 private:
-    Walker walker;
     Emoter emoter;
     Self_localization self_localization;
     ColorSensor colorSensor;

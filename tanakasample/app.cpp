@@ -29,9 +29,8 @@
 #include "ColorChecker.h"
 #include "Pedestrian.h"
 #include "SonarSensor.h"
+#include "SelfLocalMoving.h"
 
-#include "area_control.h"
-#include "area.h"
 
 #if defined(BUILD_MODULE)
 #include "module_cfg.h"
@@ -40,12 +39,6 @@
 #endif
 
 using namespace ev3api;
-
-
-/**********/
-const Run_route COURSE = TEST;
-/**********/
-
 
 /* Bluetooth */
 int32_t      bt_cmd = 0;      /* Bluetoothコマンド */
@@ -62,12 +55,13 @@ PrizeArea* prizeArea;
 ColorChecker* colorChecker;
 Pedestrian* pedestrian;
 Walker* walker;
-SonarSensor* sonarSensor;
+SelfLocalMoving* selfLocalMoving;
 
 void main_task(intptr_t unused) {
 
     //Area_controlの生成
     Area_control area_control(COURSE);
+    // Area_control area_control(COURSE);
 
     pidWalker = new PidWalker();
     flagman = new Flagman();
@@ -77,7 +71,7 @@ void main_task(intptr_t unused) {
     pedestrian = new Pedestrian();
     walker = new Walker();
     prizeArea = new PrizeArea();
-    sonarSensor = new SonarSensor(PORT_3);
+    selfLocalMoving = new SelfLocalMoving();
 
     /* LCD画面表示 */
     msg_f("ET-Robocon'16 tanakasample", 1);
@@ -100,40 +94,23 @@ void main_task(intptr_t unused) {
     /* 手と尻尾のリセット */
     lifter->reset();
     emoter->reset();
+    walker->reset();
 
     /*---------------Main Task from Here ここから---------------*/
 
 
+
     emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
+
+    selfLocalMoving->moveLCourseStart();
+
+    colorChecker->hoshitori();
+
+    pedestrian->monitor();
+    pedestrian->cross(colorChecker->getColor());
+    pedestrian->sumou(colorChecker->getColor());
+
     prizeArea->prizeMode();
-    // emoter->turn(100);         // 尾が速度100で回転する
-    // pidWalker->accelerate(0, 70);
-    // while(1) {
-    //     walker->runStraight(80);
-    //     if(ev3_button_is_pressed(BACK_BUTTON)) {
-    //         break;
-    //     }
-    // }
-    // while(1) {
-    //     pidWalker->trace();        // PID（実質PD）制御でライントレースする
-    //     if(ev3_button_is_pressed(BACK_BUTTON)) {
-    //         break;
-    //     }
-    //     if(sonarSensor->getDistance() < 50) {
-    //         pidWalker->brake(0, 10);
-    //         if(sonarSensor->getDistance() < 10) {
-    //             pidWalker->stop();
-    //             emoter->defaultSet(0);
-    //             prizeArea->getPrize();
-    //             prizeArea->carryPrize();
-    //             break;
-    //         }
-    //     }
-    // }
-
-    // pedestrian->monitor();
-    // pedestrian->cross();
-
 
     /**********/
     /*Areaとcontrolをここで実行*/
