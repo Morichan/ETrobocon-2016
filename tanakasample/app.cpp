@@ -29,6 +29,7 @@
 #include "ColorChecker.h"
 #include "Pedestrian.h"
 #include "SonarSensor.h"
+#include "SelfLocalMoving.h"
 
 
 #if defined(BUILD_MODULE)
@@ -54,12 +55,12 @@ PrizeArea* prizeArea;
 ColorChecker* colorChecker;
 Pedestrian* pedestrian;
 Walker* walker;
-SonarSensor* sonarSensor;
+SelfLocalMoving* selfLocalMoving;
 
 void main_task(intptr_t unused) {
 
     //Area_controlの生成
-    //Area_control new area_control(COURSE);
+    // Area_control area_control(COURSE);
 
     pidWalker = new PidWalker();
     flagman = new Flagman();
@@ -69,7 +70,7 @@ void main_task(intptr_t unused) {
     pedestrian = new Pedestrian();
     walker = new Walker();
     prizeArea = new PrizeArea();
-    sonarSensor = new SonarSensor(PORT_3);
+    selfLocalMoving = new SelfLocalMoving();
 
     /* LCD画面表示 */
     msg_f("ET-Robocon'16 tanakasample", 1);
@@ -93,33 +94,43 @@ void main_task(intptr_t unused) {
     lifter->reset();
     emoter->reset();
     walker->reset();
+
     /*---------------Main Task from Here ここから---------------*/
-      
+
+
+
+    emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
 
     colorChecker->hoshitori();
     pedestrian->monitor();
     pedestrian->cross(colorChecker->getColor());
     pedestrian->sumou(colorChecker->getColor());
 
-    pidWalker->accelerate(0, 70);
+    selfLocalMoving->moveLCourseStart();
 
-    while(1) {
-        pidWalker->trace();        // PID（実質PD）制御でライントレースする
-        if(ev3_button_is_pressed(BACK_BUTTON)) {
-            break;
-        }
-        if(sonarSensor->getDistance() < 60) {
-            pidWalker->brake(0, 10);
-            if(sonarSensor->getDistance() < 10) {
-                pidWalker->stop();
-                emoter->defaultSet(0);
-                prizeArea->getPrize();
-                prizeArea->carryPrize();
-                break;
-            }
-        }
-    }
+    // colorChecker->hoshitori();
+    // pedestrian->monitor();
+    // pedestrian->cross(colorChecker->getColor());
+    // pedestrian->sumou(colorChecker->getColor());
 
+    // pidWalker->accelerate(0, 70);
+
+    // while(1) {
+    //     pidWalker->trace();        // PID（実質PD）制御でライントレースする
+    //     if(ev3_button_is_pressed(BACK_BUTTON)) {
+    //         break;
+    //     }
+    //     if(sonarSensor->getDistance() < 60) {
+    //         pidWalker->brake(0, 10);
+    //         if(sonarSensor->getDistance() < 10) {
+    //             pidWalker->stop();
+    //             emoter->defaultSet(0);
+    //             prizeArea->getPrize();
+    //             prizeArea->carryPrize();
+    //             break;
+    //         }
+    //     }
+    // }
 
     /**********/
     /*Areaとcontrolをここで実行*/
