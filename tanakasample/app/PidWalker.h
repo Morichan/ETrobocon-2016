@@ -1,12 +1,12 @@
 #ifndef __PID_WALKER__
 #define __PID_WALKER__
 
+#include "pid.h"
+#include "Walker.h"
 #include "ColorSensor.h"
 #include "SonarSensor.h"
 #include "Clock.h"
-#include "Walker.h"
 #include "Emoter.h"
-#include "pid.h"
 #include "self_localization.h"
 
 using namespace ev3api;
@@ -20,15 +20,15 @@ public:
     void brake(int8_t startForward, int8_t _forward);
     void setForward(int8_t _forward);
     void trace();
+    Pid pid;
     Walker walker;
 
 private:
-    Emoter emoter;
-    Self_localization self_localization;
     ColorSensor colorSensor;
     SonarSensor sonarSensor;
     Clock clock;
-    Pid pid;
+    Emoter emoter;
+    Self_localization self_localization;
     int8_t forward = 25;
     int8_t turn = 0;
     int8_t border = 30;

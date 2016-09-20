@@ -60,7 +60,6 @@ SelfLocalMoving* selfLocalMoving;
 void main_task(intptr_t unused) {
 
     //Area_controlの生成
-    Area_control area_control(COURSE);
     // Area_control area_control(COURSE);
 
     pidWalker = new PidWalker();
@@ -100,7 +99,7 @@ void main_task(intptr_t unused) {
 
 
 
-    emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
+    // emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
 
     selfLocalMoving->moveLCourseStart();
 

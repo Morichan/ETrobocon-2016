@@ -24,18 +24,19 @@ Self_localization::Self_localization(){
 
 /*リセット(anglechangeした場合に使用する)*/
 /*
- edge_direction:右->1
-                左->-1
+ clock_wise:時計回り->1
+            反時計まわり->-1
  */
-int Self_localization::angle_reset(int edge_direction){
+int Self_localization::angle_reset(int clock_wise,int rotated_angle){
     walker_sl.reset();
     right_motor_current_angle = (float)walker_sl.get_count_R();//回転数の初期化(座標は保持)
     left_motor_current_angle = (float)walker_sl.get_count_L();//回転数の初期化(座標は保持)
     //車体の角度を更新(左エッジ(edge_direction = -1):180-,右エッジ:なし)
-    if (edge_direction == -1) {
-       current_angle = (subtraction_radian_angle) + current_angle;
+    rad_angle = (rotated_angle * M_PI)/180;
+    if (clock_wise == 1) {
+       current_angle = current_angle + rad_angle;
     }else{
-         current_angle =current_angle + (subtraction_radian_angle-100);
+         current_angle =current_angle - rad_angle;
     }
    
     return 1;
@@ -154,140 +155,25 @@ int Self_localization::near_target_coordinates(float target_x, float target_y, f
  target_line:ラインの座標
  target_axis x座標→１or y座標→ −１
  */
-int Self_localization::line_target_coordinates(int target_line,int target_axis){
+int Self_localization::line_target_coordinates(int target_line,int target_axis,int updown){
     if (target_axis == 1) {/*指定する座標がx軸の場合*/
         axis_size = current_x;
     }
     if(target_axis == -1){/*指定する座標がy軸の場合*/
         axis_size = current_y;
-
     }
-    if (target_line > axis_size)/*指定する座標を通った場合*/
-        return 0;
-    else
-        return 1;
-    
-}
 
-
-/*目的地点までの移動*///<-動くかわからない
-/*
- target_x:目的地のx座標
- target_y:目的地のy座標
- target_radius:目的地の周囲(半径)
- ev3_radius:ev3の半径
- edge_direction:エッジの向き 右->1 左=-1
- */
-int Self_localization::navi(float target_x, float target_y, float target_radius, float ev3_radius,int edge_direction){
-    update(edge_direction);
-    navi_standard_point(20);
-        /*②２点の座標から傾きと切片を求める(目的地x,目的地y)*/
-    slope_intercept(target_x,target_y);
-    /*③向きの算出 →　direction(仮)*/
-    ev3_direction = turn_target_point();
-    /*float → int*/
-    if(edge_direction == 1){
-        ev3_direction_int = ev3_direction -100;
-    }else if(edge_direction == -1){
-    ev3_direction_int = ev3_direction;
-        ev3_direction_int -= ev3_direction_int%5;
-    
+    if(updown > 0) {
+        if (target_line > axis_size)/*指定する座標を通った場合*/
+            return 0;
+        else
+            return 1;
+    } else {
+        if (target_line < axis_size)/*指定する座標を通った場合*/
+            return 0;
+        else
+            return 1;
     }
-    x_now = current_x;
-    y_now = current_y;
-    /*目的地の方を向く*/
-    /*
-     時計回り:-1
-     反時計:1
-     */
-    if(flag_1 == 0){
-    walker_sl.angleChange(ev3_direction_int,1);
-        angle_reset(edge_direction);
-        current_x = x_now;
-        current_y = y_now;
-        flag_1 = 1;
-    }
-    /*基準地点が更新されるまで移動*/
-        
-    /*事故位置のリセット*/
-   // angle_reset(edge_direction);
-    
-    if(flag_1 == 1) {
-        walker_sl.run(25,0);
-        if (navi_standard_point(20)) {
-            flag_1 = 0;
-        }
-        clock.sleep(200);
-    }
-    /*近くに来たら1を返す*/
-    if(near_target_coordinates(target_x,target_y,target_radius,ev3_radius) == 1){
-        walker_sl.run(0,0);
-        flag_1 = 2;
-        return 1;
-    }else{
-        return 0;
-    }
-    
-}
-
-/*目的地の方向を向くための計算*/
-/*
- tortal_slope:各式の傾きの積
- tan_angle:tanΘの値
- radian_angle:Θのラジアン値
- subtraction_radian_angle:πからΘを引いた値
- degree_angle:Θの角度
- 戻り値:現在地から目的地に行くための角度を求める
- */
-int Self_localization::turn_target_point(){
-   tortal_slope  = origin_slope * target_slope;
-    if(tortal_slope == -1){
-        /*積が-1であった場合に90°である*/
-        return 90;
-    }else{
-        /*tanΘの値を求める*/
-        tan_angle = fabs((target_slope - origin_slope)/(1+target_slope * origin_slope));
-        /*逆三角関数を用いてΘを求める*/
-        radian_angle = atan(tan_angle);
-        /*πから引く*/
-        subtraction_radian_angle = M_PI - radian_angle;
-        /*ラジアン→角度*/
-        degree_angle = (subtraction_radian_angle * 180)/M_PI;
-        
-        return degree_angle;
-    }
-    
-}
-
-
-
-/*(基準点)２点の座標から示される直線の傾きと切片を計算*/
-/*
- target_x:目的地のx座標
- target_y:目的地のy座標
- standard_point_x:基準点のx座標
- standard_point_y:基準点のy座標
- current_x:現在地のx座標
- current_y:現在地のy座標
- origin_slope:傾き(float)
- origin_intercept:切片(float)
- */
-void Self_localization::slope_intercept(float target_x,float target_y){
-    
-    /*基準点と現在地*/
-    /*傾きを求める*/
-    origin_slope = (current_y - standard_point_y)/(current_x - standard_point_x);
-    
-    /*切片を求める*/
-    origin_intercept = (current_y-standard_point_y)/(current_x - standard_point_x) + standard_point_y;
-
-    /*目的地と現在地*/
-    /*傾きを求める*/
-    target_slope = (current_y - target_y)/(current_x - target_x);
-    
-    /*切片を求める*/
-    target_intercept = (current_y-target_y)/(current_x - target_x) + target_y;
-
 }
 
 
@@ -310,24 +196,6 @@ int Self_localization::standard_point(int distance){
 }
 
 
-
-/*x基準値の更新(naviでの移動中)*/
-/*
- 役割:前回の基準点よりもdistance分の距離以上離れると基準の位置が更新される
- current_x:現在のx座標
- current_y:現在のy座標
- navi_standard_point_x:基準点のx座標
- navi_standard_point_y:基準点のy座標
- */
-int Self_localization::navi_standard_point(int distance){
-    
-    if (pow((current_x - standard_point_x),2.0) + pow((current_y - standard_point_y),2.0) > distance){
-        navi_standard_point_x = current_x;
-        navi_standard_point_y = current_y;
-        return 1;
-    }
-    return 0;
-}
 
 
 /*--------------------------------------------------------------------------------------------------------------*/

@@ -36,6 +36,11 @@ void Walker::run(int8_t pwm, int8_t turn) {
     rightWheel.setPWM(pwm + turn * leftRight);
 }
 
+void Walker::runStraightReset() {
+    oldWheelL = 0;
+    oldWheelR = 0;
+}
+
 void Walker::runStraight(int8_t pwm) {
     msg_f("running straight...", 1);
 
@@ -85,12 +90,26 @@ int32_t Walker::get_count_R() {
 }
 
 int Walker::edgeChange() {
+    int32_t default_countL = get_count_L();
+    int32_t default_countR = get_count_R();
+
     if(leftRight == 1) {
-        run(10, 5);
-        clock.sleep(10);
+        while(1) {
+            run(10, 5);
+            clock.sleep(4);
+            if(get_count_L() - default_countL > 20) {
+                break;
+            }
+        }
         leftRight = -1;
     } else {
-        run(10, 5);
+        while(1) {
+            run(10, 5);
+            clock.sleep(4);
+            if(get_count_R() - default_countR > 20) {
+                break;
+            }
+        }
         clock.sleep(10);
         leftRight = 1;
     }

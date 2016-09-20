@@ -15,7 +15,8 @@ void ColorChecker::checkBlockColor() {
 
 void ColorChecker::hoshitori() {
   int count=0,turn=0;
-  pidWalker.setForward(20);
+  pidWalker.setForward(40);
+  pidWalker.pid.setPid(0.5, 0.0, 2.0, 30);
   while(1){
     pidWalker.trace();
     if (colorSensor.getColorNumber() == 2){

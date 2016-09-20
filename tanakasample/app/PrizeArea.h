@@ -26,6 +26,8 @@ private:
     Lifter lifter;
     Emoter emoter;
     PidWalker pidWalker;
+    Self_localization self_l;
+    FILE* fp = fopen("speedPrizeArea.txt", "w");
 };
 
 #endif

@@ -5,15 +5,11 @@ SelfLocalMoving::SelfLocalMoving():
 }
 
 void SelfLocalMoving::moveLCourseStart() {
-    // FILE* fp  = fopen("speed.txt", "w");
-    // FILE* fp2 = fopen("direction.txt", "w");
-    // FILE* fp3 = fopen("standard.txt", "w");
-    // FILE* fp4 = fopen("angle.txt", "w");
-
     bool intoFirstCurve = false;
     bool outFirstCurve = false;
     bool intoSecondCurve = false;
     bool intoEdgeChangeCurve = false;
+    bool outEdgeChangeCurve = false;
 
 
     pidWalker.accelerate(1, 70);
@@ -33,29 +29,47 @@ void SelfLocalMoving::moveLCourseStart() {
          */
         intoFirstCurve = nearTarget(300, 0, 25, 0);
         outFirstCurve = nearTarget(310, -50, 25, 1);
-        intoSecondCurve = nearTarget(170, -65, 25, 2);
-        intoEdgeChangeCurve = nearTarget(125, -200, 25, 3);
-        outEdgeChangeCurve = nearTarget(220, -250, 25, 4);
+        intoSecondCurve = nearTarget(180, -65, 25, 2);
+        intoEdgeChangeCurve = nearTarget(-180, -1, -1, 3);
+        outEdgeChangeCurve = nearTarget(200, 1, 1, 4);
 
         if(intoFirstCurve) {
             ev3_speaker_play_tone(NOTE_E5, 20);
+            pidWalker.pid.setPid(0.8, 0.0, 5.0, 30);
             pidWalker.brake(0, 30);
         }
 
         if(outFirstCurve) {
             ev3_speaker_play_tone(NOTE_E5, 20);
-            pidWalker.accelerate(0, 60);
+            pidWalker.accelerate(0, 70);
+            pidWalker.pid.setPid(1.0, 0.0, 5.0, 30);
         }
 
         if(intoSecondCurve) {
             ev3_speaker_play_tone(NOTE_E5, 20);
+            pidWalker.pid.setPid(0.5, 0.0, 2.0, 30);
             pidWalker.brake(0, 45);
         }
 
         if(intoEdgeChangeCurve) {
             ev3_speaker_play_tone(NOTE_E5, 20);
+            pidWalker.pid.setPid(0.5, 0.0, 0.8, 30);
+            pidWalker.brake(0, 10);
             pidWalker.walker.edgeChange();
             edge_direction = -1;
+            pidWalker.accelerate(0, 40);
+            pidWalker.pid.setPid(1.0, 0.0, 5.0, 30);
+        }
+
+        if(outEdgeChangeCurve) {
+            ev3_speaker_play_tone(NOTE_E5, 20);
+            pidWalker.pid.setPid(0.5, 0.0, 0.8, 30);
+            pidWalker.brake(0, 10);
+            pidWalker.walker.edgeChange();
+            edge_direction = 1;
+            pidWalker.accelerate(0, 40);
+            pidWalker.pid.setPid(1.0, 0.0, 2.0, 30);
+            break;
         }
 
         self_localization.writing_current_coordinates(fp);
@@ -70,14 +84,21 @@ void SelfLocalMoving::moveLCourseStart() {
 }
 
 bool SelfLocalMoving::nearTarget(int _x, int _y, int _r, int _flag) {
-    bool flag_near_target;
+    bool flag_near_target = false;
 
-    if(self_localization.near_target_coordinates(_x, _y, _r, 0) == 1 &&
-            _flag == flag_edge) {
-        flag_near_target = true;
-        flag_edge++;
+    if(_r > 2) {
+        if(self_localization.near_target_coordinates(_x, _y, _r, 0) == 1 &&
+                _flag == flag_edge) {
+            flag_near_target = true;
+            flag_edge++;
+        }
     } else {
-        flag_near_target = false;
+        // 半径が小さいものはそもそも難しいから、ライン指定としておく
+        if(self_localization.line_target_coordinates(_x, _y, _r) == 1 &&
+                _flag == flag_edge) {
+            flag_near_target = true;
+            flag_edge++;
+        }
     }
 
     return flag_near_target;

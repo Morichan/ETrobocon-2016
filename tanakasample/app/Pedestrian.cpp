@@ -25,6 +25,7 @@ void Pedestrian::monitor(){
 
 void Pedestrian::cross(int8_t t_color){
   pidWalker.setForward(20);
+  pidWalker.pid.setPid(0.5, 0.0, 2.0, 30);
   moveColor();
   if(t_color==5){
     walker.moveAngle(30,180);
@@ -118,6 +119,8 @@ void Pedestrian::turnColor(int8_t way){
 void Pedestrian::sumou(int8_t target_color){
   int count=0,turn=0;;
   msg_f("ETsumou",1);
+
+  pidWalker.pid.setPid(0.5, 0.0, 2.0, 30);
   if(target_color == 2 || target_color == 5){
     if(target_color == 2){
       msg_f("search red",2);
@@ -276,14 +279,12 @@ void Pedestrian::sumou(int8_t target_color){
     if(count>=300) break;
   }
   count=0;
-  pidWalker.setForward(30);
+  pidWalker.accelerate(0, 40);
   while(1){
     pidWalker.trace();
     count++;
-    if(count>=1000) break;
+    if(count>=800) break;
   }
-  walker.reset();
   msg_f("search finished",2);
-  walker.stop();
 }
 

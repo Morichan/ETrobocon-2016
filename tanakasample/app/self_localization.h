@@ -40,6 +40,7 @@ private:
     float navi_standard_point_x;
     float navi_standard_point_y;
     float x_now,y_now;
+    float rad_angle;
     /*turn_target_point*/
     
     //target_x,target_y,target_radius,ev3_radius;//目的地指定用
@@ -51,7 +52,7 @@ public:
     //Constructor
     Self_localization();
     //リセット（回転した時に使用）
-    int angle_reset(int edge_direction);
+    int angle_reset(int clock_wise,int rotated_angle);
     //リセット
     int reset();
     //自己位置の計算(エッジによって変更の必要あり)
@@ -60,16 +61,9 @@ public:
     int near_target_coordinates(float target_x, float target_y, float target_radius,
                                                   float ev3_radius);
     /*目的の指定(ゴールテープ方式)*/
-    int line_target_coordinates(int target_line,int target_axis);
+    int line_target_coordinates(int target_line,int target_axis,int updown);
     /*①基準となる座標の指定*/
     int standard_point(int distance);
-    /*②(目的地)２点の座標から示される直線の傾きと切片を計算*/
-    void slope_intercept(float target_x,float target_y);
-    /*目的地を向くための計算*/
-    int turn_target_point();
-    /*目的地までの移動*/
-    int navi(float target_x, float target_y, float target_radius, float ev3_radius,int edge_direction);
-    int navi_standard_point(int distance);
     
     
     //ファイル書き出し,画面出力
