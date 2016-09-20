@@ -59,7 +59,7 @@ SonarSensor* sonarSensor;
 void main_task(intptr_t unused) {
 
     //Area_controlの生成
-    Area_control area_control(COURSE);
+    // Area_control area_control(COURSE);
 
     pidWalker = new PidWalker();
     flagman = new Flagman();
