@@ -20,7 +20,8 @@
 
 #include "app.h"
 #include "util.h"
-
+#include "Clock.h"/*追加*/
+#include "Walker.h"
 #include "Flagman.h"
 #include "PidWalker.h"
 #include "Lifter.h"
@@ -29,7 +30,9 @@
 #include "ColorChecker.h"
 #include "Pedestrian.h"
 #include "SonarSensor.h"
-
+#include "ev3api.h"
+/*自己位置推定*/
+#include "self_localization.h"
 
 #if defined(BUILD_MODULE)
 #include "module_cfg.h"
@@ -55,12 +58,15 @@ ColorChecker* colorChecker;
 Pedestrian* pedestrian;
 Walker* walker;
 SonarSensor* sonarSensor;
-
+Clock* clock;
+/*自己位置推定*/
+Self_localization* self_localization;
+/*自己位置推定*/
+FILE *fp;
+FILE *fp2;
+FILE *fp3;
+FILE *fp4;
 void main_task(intptr_t unused) {
-
-    //Area_controlの生成
-    // Area_control area_control(COURSE);
-
     pidWalker = new PidWalker();
     flagman = new Flagman();
     lifter = new Lifter();
@@ -69,8 +75,18 @@ void main_task(intptr_t unused) {
     pedestrian = new Pedestrian();
     walker = new Walker();
     prizeArea = new PrizeArea();
+    self_localization = new Self_localization();
     sonarSensor = new SonarSensor(PORT_3);
-
+    clock = new Clock();
+    walker = new Walker();
+    /*自己位置関係*/
+    fp = fopen("speed.txt","w");
+    fp2 = fopen("direction.txt","w");
+    fp3 = fopen("standard.txt","w");
+    fp4 = fopen("angle.txt","w");
+    int edge_direction = 1;//エッジの向きによって変更(+->右,-->左)
+        int flag_edge1 = 0; //フラグNo.1
+    //int flag_edge2 = 0; //フラグNo.2
     /* LCD画面表示 */
     msg_f("ET-Robocon'16 tanakasample", 1);
     msg_f(" create from Katlab-sample.", 2);
@@ -92,49 +108,99 @@ void main_task(intptr_t unused) {
     /* 手と尻尾のリセット */
     lifter->reset();
     emoter->reset();
-    walker->reset();
-
+    walker->reset();//必要???
     /*---------------Main Task from Here ここから---------------*/
 
 
-
-    emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
-
-    colorChecker->hoshitori();
-    pedestrian->monitor();
-    pedestrian->cross(colorChecker->getColor());
-    pedestrian->sumou(colorChecker->getColor());
-
-    pidWalker->accelerate(0, 70);
-
+   /*スタートダッシュ:motor:100まで加速*/
+    /*
+     使わない時はsetforwardからいじる(pidwoker)
+     */
+    pidWalker->startDash(70);
     while(1) {
-        pidWalker->trace();        // PID（実質PD）制御でライントレースする
+        
+            pidWalker->trace();        // PID（実質PD）制御でライントレースする
+            
+
+        
+        
+        /*自己位置のデータ更新*/
+        self_localization->update(edge_direction);
+        /*①基準地の更新*/
+        self_localization->standard_point(6);//基準値を6point離れるごとに更新
+
+        
+        /*走行タスクの入力*/
+/*--------------------------------------------------------------------------------------------------------------*/
+        if (self_localization->near_target_coordinates(300, 0, 25,0) == 1 && flag_edge1 == 0) {
+            ev3_speaker_play_tone(NOTE_E5, 20);
+            /*減速*/
+            pidWalker->setForward(50);
+            pidWalker->setForward(30);
+            
+            flag_edge1 = 1;
+        }
+        
+        if (self_localization->near_target_coordinates(310, -50, 25,0) == 1 && flag_edge1 == 1 ) {
+            ev3_speaker_play_tone(NOTE_E5, 20);
+            /*加速*/
+            pidWalker->startDash(60);
+            flag_edge1 = 2;
+        }
+        
+        if (self_localization->near_target_coordinates(170, -65, 25,0) == 1) {
+            ev3_speaker_play_tone(NOTE_E5, 20);
+            /*減速*/
+            pidWalker->setForward(45);
+            
+
+                    }
+        if (self_localization->near_target_coordinates(125, -270, 25,0) == 1 && flag_edge1 == 2) {
+            flag_edge1 = 3;
+        }
+
+        if (flag_edge1 == 3) {
+            self_localization->update(edge_direction);
+            /*①基準地の更新*/
+            self_localization->standard_point(6);//基準値を6point離れるごとに更新
+            ev3_speaker_play_tone(NOTE_E5, 20);
+            /*エッジチェンジ(右->左)*/
+            if (self_localization->navi(170,-350,30,0,1) == 1) {
+                self_localization->writing_direction(fp2);
+                flag_edge1 = 4;
+            }
+        
+
+        }
+        
+        
+        
+        
+/*--------------------------------------------------------------------------------------------------------------*/
+        
+        self_localization->writing_current_coordinates(fp);
+        self_localization->writing_angle(fp4);
+        
+        /*ボタン検知したらSTOP*/
         if(ev3_button_is_pressed(BACK_BUTTON)) {
             break;
         }
-        if(sonarSensor->getDistance() < 60) {
-            pidWalker->brake(0, 10);
-            if(sonarSensor->getDistance() < 10) {
-                pidWalker->stop();
-                emoter->defaultSet(0);
-                prizeArea->getPrize();
-                prizeArea->carryPrize();
-                break;
-            }
+        /*障害物検知したらSTOP*/
+        if(sonarSensor->getDistance() < 10) {
+            break;
         }
     }
-
-    /**********/
-    /*Areaとcontrolをここで実行*/
-    //while (1)
-    //  area_control.update();
-    /**********/
+    pidWalker->stop();
+    // colorChecker->checkBlockColor();
+    emoter->defaultSet(0);
+    lifter->liftUp();
+    // pedestrian->monitor();
+    // pedestrian->cross();
 
 
 
     /*---------------Main Task upto Here ここまで---------------*/
 
-    walker->stop();
     lifter->defaultSet(0);
     emoter->defaultSet(0);
     lifter->terminate();
@@ -144,7 +210,12 @@ void main_task(intptr_t unused) {
     msg_f("", 2);
     // ter_tsk(BT_TASK);         // Bluetooth通信タスクの停止
     fclose(bt);
-
+    
+    /*自己位置推定*/
+    fclose(fp);
+    fclose(fp2);
+    fclose(fp3);
+    fclose(fp4);
     ext_tsk();
 }
 
