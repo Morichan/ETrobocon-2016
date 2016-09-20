@@ -105,14 +105,15 @@ void main_task(intptr_t unused) {
 
 
     emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
+    prizeArea->prizeMode();
     // emoter->turn(100);         // 尾が速度100で回転する
-    pidWalker->accelerate(0, 70);
-    while(1) {
-        walker->runStraight(90);
-        if(ev3_button_is_pressed(BACK_BUTTON)) {
-            break;
-        }
-    }
+    // pidWalker->accelerate(0, 70);
+    // while(1) {
+    //     walker->runStraight(80);
+    //     if(ev3_button_is_pressed(BACK_BUTTON)) {
+    //         break;
+    //     }
+    // }
     // while(1) {
     //     pidWalker->trace();        // PID（実質PD）制御でライントレースする
     //     if(ev3_button_is_pressed(BACK_BUTTON)) {
