@@ -5,20 +5,22 @@ ETrobocon2016で使われるであろうC++コードのサンプル、通称tana
 
 ## コンパイルの方法
 
+```
 $ pwd  
 .../ev3-beta6-2-release/hrp2/sdk/ETrobocon-2016  
 $ ls  
 README.md tanakasample Makefile tanakasample_cpp  
 $ make app=tanakasample  
-
+```
 または、  
 
+```
 $ pwd  
 .../ev3-beta6-2-release/hrp2/sdk  
 $ ls  
 workspace beginner ETrobocon-2016  
 $ make app=ETrobocon-2016/tanakasample  
-
+```
 ここで何もエラーが発生しなければapp実行ファイルができます。  
 それを任意の名前にするなり何なりして、HackEVのsdカードに入れます。  
 下記の階層（appsディレクトリ内）にコピペしてください  
