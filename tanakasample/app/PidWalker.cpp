@@ -25,17 +25,20 @@ void PidWalker::stop() {
  * 二つ目の引数までのスピードに上げる
  */
 void PidWalker::accelerate(int8_t startForward, int8_t _forward) {
-    forward = startForward;
     int32_t count = 0;
 
-    // 最初のスピードより最後のスピードのほうが遅いときは0からに強制
-    if(forward > _forward || forward < 0) {
-        forward = 0;
-    }
+    if(startForward != 0) {
+        forward = startForward;
 
-    // 最終的なスピードがマイナスの時は、初期値と同じにする（加速しない）
-    if(_forward < 0) {
-        _forward = forward;
+        // 最初のスピードより最後のスピードのほうが遅いときは0からに強制
+        if(forward > _forward || forward < 0) {
+            forward = 0;
+        }
+
+        // 最終的なスピードがマイナスの時は、初期値と同じにする（加速しない）
+        if(_forward < 0) {
+            _forward = forward;
+        }
     }
 
     while(1) {
