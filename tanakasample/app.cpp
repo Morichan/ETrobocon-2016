@@ -155,7 +155,7 @@ void main_task(intptr_t unused) {
             
 
                     }
-        if (self_localization->near_target_coordinates(125, -270, 25,0) == 1 && flag_edge1 == 2) {
+        if (self_localization->near_target_coordinates(125, -285, 25,0) == 1 && flag_edge1 == 2) {
             flag_edge1 = 3;
         }
 
@@ -164,8 +164,8 @@ void main_task(intptr_t unused) {
             /*①基準地の更新*/
             self_localization->standard_point(6);//基準値を6point離れるごとに更新
             ev3_speaker_play_tone(NOTE_E5, 20);
-            /*エッジチェンジ(右->左)*/
-            if (self_localization->navi(170,-350,30,0,1) == 1) {
+            /*ナビゲーション*/
+            if (self_localization->navi(170,-320,30,0,1) == 1) {
                 self_localization->writing_direction(fp2);
                 flag_edge1 = 4;
             }

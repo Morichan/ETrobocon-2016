@@ -33,7 +33,7 @@ int Self_localization::angle_reset(int edge_direction){
     left_motor_current_angle = (float)walker_sl.get_count_L();//回転数の初期化(座標は保持)
     //車体の角度を更新(左エッジ(edge_direction = -1):180-,右エッジ:なし)
     if (edge_direction == -1) {
-       current_angle = (subtraction_radian_angle) + current_angle;
+       current_angle = (subtraction_radian_angle -100) + current_angle;
     }else{
          current_angle =current_angle + (subtraction_radian_angle-100);
     }
@@ -180,19 +180,20 @@ int Self_localization::line_target_coordinates(int target_line,int target_axis){
  */
 int Self_localization::navi(float target_x, float target_y, float target_radius, float ev3_radius,int edge_direction){
     update(edge_direction);
-    if(navi_standard_point(20) == 1){
+    
         /*②２点の座標から傾きと切片を求める(目的地x,目的地y)*/
     slope_intercept(target_x,target_y);
     /*③向きの算出 →　direction(仮)*/
     ev3_direction = turn_target_point();
     /*float → int*/
     if(edge_direction == 1){
-        ev3_direction_int = ev3_direction -100;
+        ev3_direction_int = ev3_direction - 100;
+        ev3_direction_int -= ev3_direction_int%5;
     }else if(edge_direction == -1){
-    ev3_direction_int = ev3_direction;
+    ev3_direction_int = ev3_direction - 100;
         ev3_direction_int -= ev3_direction_int%5;
     }
-    }
+
     x_now = current_x;
     y_now = current_y;
     /*目的地の方を向く*/
@@ -214,7 +215,7 @@ int Self_localization::navi(float target_x, float target_y, float target_radius,
     
     if(flag_1 == 1) {
         walker_sl.run(25,0);
-        if (navi_standard_point(20)) {
+        if (navi_standard_point(20) == 1) {
             flag_1 = 0;
         }
         clock.sleep(200);
