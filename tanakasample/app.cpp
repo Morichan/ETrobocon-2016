@@ -30,8 +30,6 @@
 #include "Pedestrian.h"
 #include "SonarSensor.h"
 
-#include "area_control.h"
-#include "area.h"
 
 #if defined(BUILD_MODULE)
 #include "module_cfg.h"
@@ -40,12 +38,6 @@
 #endif
 
 using namespace ev3api;
-
-
-/**********/
-const Run_route COURSE = TEST;
-/**********/
-
 
 /* Bluetooth */
 int32_t      bt_cmd = 0;      /* Bluetoothコマンド */
@@ -66,8 +58,8 @@ SonarSensor* sonarSensor;
 
 void main_task(intptr_t unused) {
 
-  //Area_controlの生成
-  Area_control area_control(COURSE);
+    //Area_controlの生成
+    Area_control area_control(COURSE);
 
     pidWalker = new PidWalker();
     flagman = new Flagman();
@@ -100,30 +92,37 @@ void main_task(intptr_t unused) {
     /* 手と尻尾のリセット */
     lifter->reset();
     emoter->reset();
+    walker->reset();
 
     /*---------------Main Task from Here ここから---------------*/
 
 
+
     emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
-    // emoter->turn(100);         // 尾が速度100で回転する
-    pidWalker->startDash(70);
+
+    colorChecker->hoshitori();
+    pedestrian->monitor();
+    pedestrian->cross(colorChecker->getColor());
+    pedestrian->sumou(colorChecker->getColor());
+
+    pidWalker->accelerate(0, 70);
+
     while(1) {
         pidWalker->trace();        // PID（実質PD）制御でライントレースする
         if(ev3_button_is_pressed(BACK_BUTTON)) {
             break;
         }
-        if(sonarSensor->getDistance() < 10) {
-            break;
+        if(sonarSensor->getDistance() < 60) {
+            pidWalker->brake(0, 10);
+            if(sonarSensor->getDistance() < 10) {
+                pidWalker->stop();
+                emoter->defaultSet(0);
+                prizeArea->getPrize();
+                prizeArea->carryPrize();
+                break;
+            }
         }
     }
-    pidWalker->stop();
-    // colorChecker->checkBlockColor();
-    prizeArea->getPrize();
-    emoter->defaultSet(0);
-    lifter->liftUp();
-    // pedestrian->monitor();
-    // pedestrian->cross();
-
 
     /**********/
     /*Areaとcontrolをここで実行*/
@@ -135,6 +134,7 @@ void main_task(intptr_t unused) {
 
     /*---------------Main Task upto Here ここまで---------------*/
 
+    walker->stop();
     lifter->defaultSet(0);
     emoter->defaultSet(0);
     lifter->terminate();

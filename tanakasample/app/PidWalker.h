@@ -16,7 +16,8 @@ public:
     PidWalker();
     void start();
     void stop();
-    void startDash(int8_t _forward);
+    void accelerate(int8_t startForward, int8_t _forward);
+    void brake(int8_t startForward, int8_t _forward);
     void setForward(int8_t _forward);
     void trace();
 
