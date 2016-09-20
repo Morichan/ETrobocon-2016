@@ -34,7 +34,8 @@ void SelfLocalMoving::moveLCourseStart() {
         intoFirstCurve = nearTarget(300, 0, 25, 0);
         outFirstCurve = nearTarget(310, -50, 25, 1);
         intoSecondCurve = nearTarget(170, -65, 25, 2);
-        intoEdgeChangeCurve = nearTarget(125, -270, 25, 3);
+        intoEdgeChangeCurve = nearTarget(125, -200, 25, 3);
+        outEdgeChangeCurve = nearTarget(220, -250, 25, 4);
 
         if(intoFirstCurve) {
             ev3_speaker_play_tone(NOTE_E5, 20);
@@ -53,11 +54,8 @@ void SelfLocalMoving::moveLCourseStart() {
 
         if(intoEdgeChangeCurve) {
             ev3_speaker_play_tone(NOTE_E5, 20);
-            self_localization.update(edge_direction);
-
-            self_localization.standard_point(6);
-            pidWalker.stop();
-            break;
+            pidWalker.walker.edgeChange();
+            edge_direction = -1;
         }
 
         self_localization.writing_current_coordinates(fp);
