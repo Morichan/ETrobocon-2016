@@ -129,7 +129,3 @@ void PidWalker::trace() {
 
     clock.sleep(4); /* 4msec周期起動 */
 }
-
-void PidWalker::edgeChange(){
-    walker.edgeChange();
-}
