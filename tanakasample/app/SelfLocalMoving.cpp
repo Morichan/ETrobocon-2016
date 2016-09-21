@@ -1,7 +1,7 @@
 #include "SelfLocalMoving.h"
 
 SelfLocalMoving::SelfLocalMoving():
-    sonarSensor(PORT_3) {
+    sonarSensor(PORT_3),colorSensor(PORT_2){
 }
 
 void SelfLocalMoving::moveLCourseStart() {
@@ -12,7 +12,7 @@ void SelfLocalMoving::moveLCourseStart() {
     bool outEdgeChangeCurve = false;
 
 
-    pidWalker.accelerate(1, 70);
+    pidWalker.accelerate(1, 25);
 
     while(1) {
         if(ev3_button_is_pressed(BACK_BUTTON)) {
@@ -27,12 +27,38 @@ void SelfLocalMoving::moveLCourseStart() {
         /*
          * 走行タスクの入力
          */
-        intoFirstCurve = nearTarget(300, 0, 25, 0);
+        /*intoFirstCurve = nearTarget(300, 0, 25, 0);
         outFirstCurve = nearTarget(310, -50, 25, 1);
         intoSecondCurve = nearTarget(180, -65, 25, 2);
         intoEdgeChangeCurve = nearTarget(-180, -1, -1, 3);
         outEdgeChangeCurve = nearTarget(200, 1, 1, 4);
+*/
+        intoEdgeChangeCurve = nearTarget(11.8, -1, 1, 0);
+       
+        if(intoEdgeChangeCurve){
+            ev3_speaker_play_tone(NOTE_E5, 20);
+            walker.run(20,0);
+            clock.sleep(100);
 
+            while (colorSensor.getColorNumber()!= 1) {
+                /*自己位置のデータ更新*/
+                self_localization.update(edge_direction);
+                /*①基準地の更新*/
+                self_localization.standard_point(6);//基準値を6point離れるごとに更新
+                
+                walker.run(18,0);
+                clock.sleep(400);
+                
+                if (colorSensor.getColorNumber()==1) {
+                    walker.angleChange(45,-1);
+                    walker.edgeChange();
+                    break;
+                    
+                }
+            }
+            
+        }
+        /*
         if(intoFirstCurve) {
             ev3_speaker_play_tone(NOTE_E5, 20);
             pidWalker.pid.setPid(0.8, 0.0, 5.0, 30);
@@ -71,7 +97,7 @@ void SelfLocalMoving::moveLCourseStart() {
             pidWalker.pid.setPid(1.0, 0.0, 2.0, 30);
             break;
         }
-
+         */
         self_localization.writing_current_coordinates(fp);
         self_localization.writing_angle(fp4);
 
