@@ -27,7 +27,7 @@ private:
   Motor leftWheel;
   Motor rightWheel;
   Clock clock;
-  int8_t leftRight = 1; // 1 -> 右, -1 -> 左
+  int8_t leftRight = -1; // 1 -> 右, -1 -> 左
   int8_t straightTurn = 0;
   int32_t nowWheelL = 0;
   int32_t nowWheelR = 0;
