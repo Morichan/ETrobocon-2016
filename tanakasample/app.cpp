@@ -105,6 +105,8 @@ void main_task(intptr_t unused) {
 
     puzzle->doPuzzle();
 
+    colorChecker->checkBlockColor();
+
     // selfLocalMoving->moveLCourseStart();
 
     // colorChecker->hoshitori();
