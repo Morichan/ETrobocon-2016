@@ -2,7 +2,7 @@
 
 Pedestrian::Pedestrian():
   sonarSensor(PORT_3),colorSensor(PORT_2){
-  }
+}
 
 void Pedestrian::init(){
   init_f("Pedestrian");

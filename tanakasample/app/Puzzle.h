@@ -8,19 +8,26 @@
 #include "Emoter.h"
 #include "pid.h"
 #include "self_localization.h"
+#include "PidWalker.h"
 
-using ev3api;
+
+using namespace ev3api;
 
 class Puzzle {
 public:
-  Pedestrian();
+  Puzzle();
   void runOneBlock();
+  void doPuzzle();
+  void turn90InCircle();
 
 private:
+  int currentCircleColor;
   Walker walker;
   PidWalker pidWalker;
-
-}
+  SonarSensor sonarSensor;
+  ColorSensor colorSensor;
+  Clock clock;
+};
 
 #endif
 
