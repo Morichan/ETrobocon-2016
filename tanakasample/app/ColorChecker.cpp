@@ -1,18 +1,62 @@
 #include "ColorChecker.h"
 
 ColorChecker::ColorChecker():
-    colorSensor(PORT_2), lifter() {
-}
+  colorSensor(PORT_2), lifter() {
+  }
 
 void ColorChecker::checkBlockColor() {
-    colorid_t blockColor;
-    blockColor = colorSensor.getColorNumber();
-    if(blockColor == 2) {
-        lifter.changeDefault(45);
-    }
-    lifter.changeDefault(-45);
-}
 
+  walker.reset();
+  walker.run(-10,0);
+
+  while(1){
+    if(walker.get_count_L() <= -60 && walker.get_count_R() <= -60){
+      break;
+    }
+  }
+  walker.reset();
+
+  lifter.changeDefault(75);
+
+  walker.run(5,0);
+
+  while(1){
+    if(colorSensor.getColorNumber() == 2){
+      color_id=2;
+      break;
+    }
+    if(colorSensor.getColorNumber() == 3){
+      color_id=3;
+      break;
+    }
+    if(colorSensor.getColorNumber() == 4){
+      color_id=4;
+      break;
+    }
+    if(colorSensor.getColorNumber() == 5){
+      color_id=5;
+      break;
+    }
+  }
+  walker.reset();
+
+  lifter.changeDefault(-75);
+
+  walker.reset();
+  walker.run(-10,0);
+
+  while(1){
+    if(walker.get_count_L() <= -60 && walker.get_count_R() <= -60){
+      break;
+    }
+  }
+  walker.reset();
+  //    if(blockColor == 2) {
+  //        lifter.changeDefault(45);
+  //    }
+  //    lifter.changeDefault(-45);
+
+}
 void ColorChecker::hoshitori() {
   int count=0,turn=0;
   pidWalker.setForward(40);
