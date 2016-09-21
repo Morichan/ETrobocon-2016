@@ -13,7 +13,7 @@ using namespace ev3api;
 class SelfLocalMoving {
 public:
     SelfLocalMoving();
-    void moveLCourseStart();
+    void moveRCourseStart();
     bool nearTarget(int _x, int _y, int _r, int _flag);
 
 private:

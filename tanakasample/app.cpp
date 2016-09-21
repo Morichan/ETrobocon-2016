@@ -101,16 +101,19 @@ void main_task(intptr_t unused) {
 
     // emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
 
-    selfLocalMoving->moveLCourseStart();
+    selfLocalMoving->moveRCourseStart();
+
     puzzle->doPuzzle();
-    selfLocalMoving->moveLCourseStart();
-    colorChecker->hoshitori();
 
-    pedestrian->monitor();
-    pedestrian->cross(colorChecker->getColor());
-    pedestrian->sumou(colorChecker->getColor());
+    // selfLocalMoving->moveLCourseStart();
 
-    prizeArea->prizeMode();
+    // colorChecker->hoshitori();
+
+    // pedestrian->monitor();
+    // pedestrian->cross(colorChecker->getColor());
+    // pedestrian->sumou(colorChecker->getColor());
+
+    // prizeArea->prizeMode();
 
     /**********/
     /*Areaとcontrolをここで実行*/
