@@ -47,8 +47,16 @@ void Puzzle::doPuzzle(){
             }
         }
         if(currentCircleColor == 3) {
-            flag = 0;
-            break;
+            if(flag < 3) {
+                goUpRightEdge();
+                flag++;
+            } else if(flag == 3) {
+                goLowRightEdge();
+                flag++;
+            } else {
+                flag = 0;
+                break;
+            }
         }
 
         // while (colorSensor.getColorNumber() != 1) {
@@ -115,7 +123,8 @@ void Puzzle::goLeftEdge() {
     while (colorSensor.getColorNumber() != 1) {
         pidWalker.walker.run(20,0);
     }
-    pidWalker.walker.moveAngle(20, 20);
+    pidWalker.walker.moveAngle(20, 100);
+    pidWalker.walker.angleChange(45, 1);
 }
 
 void Puzzle::goRightEdge() {
@@ -123,7 +132,8 @@ void Puzzle::goRightEdge() {
     while (colorSensor.getColorNumber() != 1) {
         pidWalker.walker.run(20,0);
     }
-    pidWalker.accelerate(1, 20);
+    pidWalker.walker.moveAngle(20, 50);
+    pidWalker.walker.angleChange(45, -1);
 }
 
 void Puzzle::goFrontEdge() {
@@ -141,41 +151,61 @@ void Puzzle::goBackEdge() {
 }
 
 void Puzzle::goLowRightEdge() {
-    pidWalker.walker.angleChange(110, -1);
+    int32_t i;
+    goRightEdge();
+    for(i = 0; i < 200; i++) {
+        pidWalker.trace();
+    }
+    pidWalker.walker.angleChange(45, -1);
     while(colorSensor.getColorNumber() != 1) {
         pidWalker.walker.run(20, 0);
     }
-    pidWalker.walker.angleChange(60, -1);
+    pidWalker.walker.moveAngle(20, 50);
+    pidWalker.walker.angleChange(45, -1);
     pidWalker.accelerate(1, 20);
 }
 
 void Puzzle::goUpRightEdge() {
-    pidWalker.walker.angleChange(60, -1);
-    pidWalker.walker.moveAngle(20, 360);
+    int32_t i;
+    goRightEdge();
+    for(i = 0; i < 200; i++) {
+        pidWalker.trace();
+    }
+    pidWalker.walker.angleChange(45, 1);
     while(colorSensor.getColorNumber() != 1) {
         pidWalker.walker.run(20, 0);
     }
-    pidWalker.walker.moveAngle(20, 60);
+    pidWalker.walker.moveAngle(20, 100);
     pidWalker.walker.angleChange(45, 1);
     pidWalker.accelerate(1, 20);
 }
 
 void Puzzle::goLowLeftEdge() {
-    pidWalker.walker.angleChange(95, 1);
+    int32_t i;
+    goLeftEdge();
+    for(i = 0; i < 200; i++) {
+        pidWalker.trace();
+    }
+    pidWalker.walker.angleChange(45, 1);
     while(colorSensor.getColorNumber() != 1) {
         pidWalker.walker.run(20, 0);
     }
-    pidWalker.walker.moveAngle(20, 60);
+    pidWalker.walker.moveAngle(20, 100);
     pidWalker.walker.angleChange(45, 1);
     pidWalker.accelerate(1, 20);
 }
 
 void Puzzle::goUpLeftEdge() {
-    pidWalker.walker.angleChange(50, 1);
-    pidWalker.walker.moveAngle(20, 360);
+    int32_t i;
+    goLeftEdge();
+    for(i = 0; i < 200; i++) {
+        pidWalker.trace();
+    }
+    pidWalker.walker.angleChange(45, -1);
     while(colorSensor.getColorNumber() != 1) {
         pidWalker.walker.run(20, 0);
     }
+    pidWalker.walker.moveAngle(20, 50);
     pidWalker.walker.angleChange(45, -1);
     pidWalker.accelerate(1, 20);
 }
