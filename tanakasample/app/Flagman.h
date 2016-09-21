@@ -4,6 +4,7 @@
 #include "TouchSensor.h"
 #include "SonarSensor.h"
 #include "Clock.h"
+#include "app.h"
 
 using namespace ev3api;
 

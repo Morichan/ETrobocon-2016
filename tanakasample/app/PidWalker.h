@@ -31,7 +31,6 @@ private:
     Self_localization self_localization;
     int8_t forward = 25;
     int8_t turn = 0;
-    int8_t border = 30;
     int8_t brightness;
     int8_t speedometer;
 };
