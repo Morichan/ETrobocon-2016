@@ -31,6 +31,7 @@
 #include "SonarSensor.h"
 #include "SelfLocalMoving.h"
 #include "Puzzle.h"
+#include "Explorer.h"
 
 #if defined(BUILD_MODULE)
 #include "module_cfg.h"
@@ -39,6 +40,7 @@
 #endif
 
 using namespace ev3api;
+void* __dso_handle;
 
 /* Bluetooth */
 int32_t      bt_cmd = 0;      /* Bluetoothコマンド */
@@ -57,6 +59,8 @@ Pedestrian* pedestrian;
 Walker* walker;
 SelfLocalMoving* selfLocalMoving;
 Puzzle* puzzle;
+Explorer* explorer;
+
 void main_task(intptr_t unused) {
 
     //Area_controlの生成
@@ -72,6 +76,8 @@ void main_task(intptr_t unused) {
     prizeArea = new PrizeArea();
     selfLocalMoving = new SelfLocalMoving();
     puzzle = new Puzzle;
+	explorer = new Explorer();
+
     /* LCD画面表示 */
     msg_f("ET-Robocon'16 tanakasample", 1);
     msg_f(" create from Katlab-sample.", 2);
@@ -100,6 +106,14 @@ void main_task(intptr_t unused) {
 
 
     // emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
+
+	//explorerの基本の使い方
+	//スタート＆ゴールの設定
+	explorer->set(0, 10);
+	//ブロックの位置指定
+	explorer->setBlocks(1,3,6,8);
+	//探索開始 vector内に経路が入ってきます(vectorは動的リスト)
+	vector<int>root = explorer->search();
 
     selfLocalMoving->moveRCourseStart();
 
