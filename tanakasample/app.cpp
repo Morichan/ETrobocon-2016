@@ -30,7 +30,7 @@
 #include "Pedestrian.h"
 #include "SonarSensor.h"
 #include "SelfLocalMoving.h"
-
+#include "Puzzle.h"
 
 #if defined(BUILD_MODULE)
 #include "module_cfg.h"
@@ -56,7 +56,7 @@ ColorChecker* colorChecker;
 Pedestrian* pedestrian;
 Walker* walker;
 SelfLocalMoving* selfLocalMoving;
-
+Puzzle* puzzle;
 void main_task(intptr_t unused) {
 
     //Area_controlの生成
@@ -71,7 +71,7 @@ void main_task(intptr_t unused) {
     walker = new Walker();
     prizeArea = new PrizeArea();
     selfLocalMoving = new SelfLocalMoving();
-
+    puzzle = new Puzzle;
     /* LCD画面表示 */
     msg_f("ET-Robocon'16 tanakasample", 1);
     msg_f(" create from Katlab-sample.", 2);
@@ -102,7 +102,8 @@ void main_task(intptr_t unused) {
     // emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
 
     selfLocalMoving->moveLCourseStart();
-
+    puzzle->doPuzzle();
+    selfLocalMoving->moveLCourseStart();
     colorChecker->hoshitori();
 
     pedestrian->monitor();
