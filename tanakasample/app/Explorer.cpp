@@ -1,7 +1,7 @@
 
 #include"Explorer.h"
 
-//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 Explorer::Explorer(){
 	for(int i=0; i<16; i++){
 	nodeList.push_back(new Node(i));
@@ -9,7 +9,7 @@ Explorer::Explorer(){
 	}
 }
 
-//ƒXƒ^[ƒg•ƒS[ƒ‹ˆÊ’uÝ’è
+//ã‚¹ã‚¿ãƒ¼ãƒˆï¼†ã‚´ãƒ¼ãƒ«ä½ç½®è¨­å®š
 void Explorer::set(int start, int goal){
 	nodeList[start]->setState('s');
 	nodeList[goal]->setState('g');

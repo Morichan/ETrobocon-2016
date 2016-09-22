@@ -98,7 +98,9 @@ void main_task(intptr_t unused) {
 
     /* 手と尻尾のリセット */
     lifter->reset();
+    lifter->defaultSet(0);
     emoter->reset();
+    emoter->defaultSet(0);
     walker->reset();
 
     /*---------------Main Task from Here ここから---------------*/
@@ -106,14 +108,6 @@ void main_task(intptr_t unused) {
 
 
     // emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
-
-	//explorerの基本の使い方
-	//スタート＆ゴールの設定
-	explorer->set(0, 10);
-	//ブロックの位置指定
-	explorer->setBlocks(1,3,6,8);
-	//探索開始 vector内に経路が入ってきます(vectorは動的リスト)
-	vector<int>root = explorer->search();
 
     selfLocalMoving->moveRCourseStart();
 
