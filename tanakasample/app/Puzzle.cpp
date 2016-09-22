@@ -12,48 +12,6 @@ Puzzle::Puzzle():
 }
 
 void Puzzle::doPuzzle(){
-    pidWalker.walker.edgeChange();
-    pidWalker.pid.setPid(0.4, 0.0, 2.0, 30);
-    pidWalker.setForward(20);
-
-    /*
-     * 色を検知したら色の値をとって次に進む
-     * 1 = 黒, 2 = 青, 3 = 緑, 4 = 黄, 5 = 赤, 6 = 白
-     */
-    goAheadNode();
-
-    oldCirclePoint = 1;
-    nowCirclePoint = 0;
-
-    /*
-     * explorerの基本の使い方
-     */
-    // スタート＆ゴールの設定
-    // explorer->set(0, 10);
-    // ブロックの位置指定
-    // explorer->setBlocks(1,3,6,8);
-    // 探索開始 vector内に経路が入ってきます(vectorは動的リスト)
-    // vector<int>root = explorer->search();
-
-    for(int i = 0; i < 1; ++i) {
-        int rootCount = 0;
-        std::vector<int> root = {1, 5, 8 , 4, 9, 10, 15, 10, 9, 4, 8, 5, 1, 0};
-
-        for(std::size_t j = 0, rootSize = root.size(); j < rootSize; ++j) {
-            nextCirclePoint = root[rootCount];
-
-            goNextPoint();
-            goAheadNode();
-
-            rootCount++;
-        }
-    }
-}
-
-void Puzzle::goNextPoint() {
-    int nowPoint  = nowCirclePoint  - oldCirclePoint;
-    int nextPoint = nextCirclePoint - nowCirclePoint;
-
     /*
      * 12 ------ 8 ------ 4 ------ 0
      *  |        |        |        |
@@ -68,14 +26,83 @@ void Puzzle::goNextPoint() {
      *  | green  |        | yellow |      |
      *  |        |        |        |      |
      * 15 ----- 11 ------ 7 ------ 3    start
-     *
+     */
+    int setRoot[2] = {4, 8};
+    int maxRoot = 2;
+    int blocks[4];
+    blocks[0] = 5;
+    blocks[1] = 14;
+    blocks[2] = 13;
+    blocks[3] = 3;
+
+    int blackBlockFlag = false; // 黒ブロックを動かしたかフラグ
+
+    pidWalker.walker.edgeChange();
+    pidWalker.pid.setPid(0.4, 0.0, 2.0, 30);
+    pidWalker.setForward(20);
+
+    /*
+     * 色を検知したら色の値をとって次に進む
+     * 1 = 黒, 2 = 青, 3 = 緑, 4 = 黄, 5 = 赤, 6 = 白
+     */
+    goAheadNode();
+
+    oldCirclePoint = 1;
+    nowCirclePoint = 0;
+
+    for(int i = 0; i < maxRoot; ++i) {
+        int rootCount = 1;
+        int start = nowCirclePoint;
+        int goal = setRoot[i];
+
+        // explorer.set(0, 9);                 // スタート＆ゴールの設定
+        // explorer.setBlocks(4, 2, 7, 14);    // ブロックの位置指定
+        // explorer.search();                  // 探索開始
+        // std::size_t s = explorer.getsize(); // 探索に必要なサイズを返す
+        // int r = explorer.getRoot(3)         // 3番目に移動すべきノードを返す
+        explorer.set(start, goal);
+        explorer.setBlocks(blocks[0], blocks[1], blocks[2], blocks[3]);
+        explorer.search();
+
+        for(std::size_t j = 0, rootSize = explorer.getSize();
+                j < rootSize; ++j) {
+            nextCirclePoint = explorer.getRoot(rootCount);
+
+            goNextPoint();
+            goAheadNode();
+
+            blockMovedFlag = false;
+            rootCount++;
+        }
+
+        // ブロック3つ動かしたが、黒を検知してない時はもうゴールしてもいいよね？
+        if(i == 2 && blackBlockFlag == true) {
+            break;
+        }
+        if(i % 2 == 0 && i != 0) {
+            blockMovedFlag = true;
+            int32_t defaultCount = pidWalker.walker.get_count_L();
+            while(defaultCount - pidWalker.walker.get_count_L() < 60) {
+                pidWalker.walker.run(-20, 0);
+                clock.sleep(4);
+            }
+        }
+        ev3_speaker_play_tone(NOTE_E5, 20);
+    }
+}
+
+void Puzzle::goNextPoint() {
+    int nowPoint  = nowCirclePoint  - oldCirclePoint;
+    int nextPoint = nextCirclePoint - nowCirclePoint;
+
+    /*
      * nowPointで向きを調べる
      * nextPointで動きを調べる
      */
 
-    // （上の図から見た）左向き
+    // （doPuzzleメソッド最初の図から見て）左向き
     if(nowPoint == 4) {
-        if(nextPoint == 4) {         // （上の図から見た）左へ移動
+        if(nextPoint == 4) {         // （doPuzzleメソッド最初の図から見て）左へ移動
             goFrontEdge();
         } else if(nextPoint == -4) { // 右へ移動
             goBackEdge();
@@ -213,7 +240,19 @@ void Puzzle::goRightEdge() {
 }
 
 void Puzzle::goFrontEdge() {
-    pidWalker.walker.moveAngle(20, 150);
+    if(blockMovedFlag) {
+        pidWalker.walker.angleChange(45, 1);
+        pidWalker.walker.moveAngle(20, 360);
+        pidWalker.walker.angleChange(90, -1);
+        pidWalker.walker.moveAngle(20, 180);
+        while(colorSensor.getColorNumber() != -1) {
+            pidWalker.walker.run(20, 0);
+        }
+        pidWalker.walker.moveAngle(20, 100);
+        pidWalker.walker.angleChange(45, 1);
+    } else {
+        pidWalker.walker.moveAngle(20, 150);
+    }
 }
 
 void Puzzle::goBackEdge() {

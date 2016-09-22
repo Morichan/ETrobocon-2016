@@ -1,10 +1,21 @@
 
 #include"Node.h"
+#include<string.h>
 
 //ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 Node::Node(int num){
 	state = '*';
 	nodeNum = num;
+
+	if(num == 0 || num == 1 || num == 4 || num == 5){
+		strcpy(nodeColor, "red");
+	}else if(num == 2 || num == 3 || num == 6 || num == 7){
+		strcpy(nodeColor, "yellow");
+	}else if(num == 8 || num == 9 || num == 12 || num == 13){
+		strcpy(nodeColor, "blue");
+	}else if(num == 10 || num == 11 || num == 14 || num == 15){
+		strcpy(nodeColor, "green");
+	}
 }
 
 //ŽüˆÍ‚Ìƒm[ƒh‚ÌÝ’è
@@ -46,12 +57,12 @@ char Node::getState(){
 	return state;
 }
 
-//ƒS[ƒ‹‚Ü‚Å‚Ì‹——£‚ÌŒvŽZ
-void Node::distance(Node* goalNode){
-	int x = (nodeNum%4 - goalNode->nodeNum%4)*(nodeNum%4 - goalNode->nodeNum%4);
-	int y = (nodeNum/4 - goalNode->nodeNum/4)*(nodeNum/4 - goalNode->nodeNum/4);
-	cost = x+y;
+//”CˆÓ‚Ìƒm[ƒh‚Ü‚Å‚Ì‹——£‚ÌŒvŽZ
+int Node::distance(Node* node){
+	int x = (nodeNum%4 - node->nodeNum%4)*(nodeNum%4 - node->nodeNum%4);
+	int y = (nodeNum/4 - node->nodeNum/4)*(nodeNum/4 - node->nodeNum/4);
 
+	return x+y;
 }
 
 vector<int> Node::getNextNode(){
@@ -65,3 +76,12 @@ int Node::getNodeNum(){
 int Node::getCost(){
 	return cost;
 }
+
+char* Node::getNodeColor(){
+	return nodeColor; 
+}
+
+void Node::setCost(int num){
+	cost = num;
+}
+

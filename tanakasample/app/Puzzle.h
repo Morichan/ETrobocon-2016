@@ -9,6 +9,7 @@
 #include "pid.h"
 #include "self_localization.h"
 #include "Explorer.h"
+#include "ColorChecker.h"
 #include "PidWalker.h"
 
 
@@ -42,9 +43,11 @@ private:
     int oldCirclePoint;  // 前回の位置保存
     int nowCirclePoint;  // 現在の位置保存
     int nextCirclePoint; // 未来の位置保存
+    bool blockMovedFlag = false;
     int flag = 0;
     Walker walker;
     Explorer explorer;
+    ColorChecker colorChecker;
     PidWalker pidWalker;
     SonarSensor sonarSensor;
     ColorSensor colorSensor;
