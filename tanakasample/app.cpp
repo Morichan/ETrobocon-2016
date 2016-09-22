@@ -109,11 +109,16 @@ void main_task(intptr_t unused) {
 
 	//explorerの基本の使い方
 	//スタート＆ゴールの設定
-	explorer->set(0, 10);
+	//近くのブロックと同じ色のところまで持っていきたいときは
+	//explorer->set(startの番号, explorer->goalExplore(startの番号, 色));
+	//explorer->set(0, 10);
+
+	explorer->set(0, explorer->goalExplore(0, "green"));
+
 	//ブロックの位置指定
 	explorer->setBlocks(1,3,6,8);
-	//探索開始 vector内に経路が入ってきます(vectorは動的リスト)
-	vector<int>root = explorer->search();
+	//探索開始
+	explorer->search();
 
     selfLocalMoving->moveRCourseStart();
 
