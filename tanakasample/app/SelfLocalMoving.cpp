@@ -5,11 +5,11 @@ SelfLocalMoving::SelfLocalMoving():
 }
 
 void SelfLocalMoving::moveRCourseStart() {
-    bool intoFirstCurve = false;
-    bool outFirstCurve = false;
-    bool intoSecondCurve = false;
+    // bool intoFirstCurve = false;
+    // bool outFirstCurve = false;
+    // bool intoSecondCurve = false;
     bool intoEdgeChangeCurve = false;
-    bool outEdgeChangeCurve = false;
+    // bool outEdgeChangeCurve = false;
 
 
     pidWalker.pid.setPid(0.5, 0.0, 2.0, 30);

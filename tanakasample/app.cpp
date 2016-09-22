@@ -98,7 +98,9 @@ void main_task(intptr_t unused) {
 
     /* 手と尻尾のリセット */
     lifter->reset();
+    lifter->defaultSet(0);
     emoter->reset();
+    emoter->defaultSet(0);
     walker->reset();
 
     /*---------------Main Task from Here ここから---------------*/
@@ -113,12 +115,12 @@ void main_task(intptr_t unused) {
 	//explorer->set(startの番号, explorer->goalExplore(startの番号, 色));
 	//explorer->set(0, 10);
 
-	explorer->set(0, explorer->goalExplore(0, "green"));
+	//explorer->set(0, explorer->goalExplore(0, "green"));
 
 	//ブロックの位置指定
-	explorer->setBlocks(1,3,6,8);
+	//explorer->setBlocks(1,3,6,8);
 	//探索開始
-	explorer->search();
+	//explorer->search();
 
     selfLocalMoving->moveRCourseStart();
 

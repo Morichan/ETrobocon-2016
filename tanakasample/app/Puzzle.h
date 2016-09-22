@@ -8,6 +8,8 @@
 #include "Emoter.h"
 #include "pid.h"
 #include "self_localization.h"
+#include "Explorer.h"
+#include "ColorChecker.h"
 #include "PidWalker.h"
 
 
@@ -19,6 +21,8 @@ public:
     void runOneBlock();
     void doPuzzle();
     void turn90InCircle();
+
+    void goNextPoint();
     void goAheadNode();
     void goLeftEdge();
     void goRightEdge();
@@ -36,8 +40,14 @@ private:
     int count_yellow = 0;
     int count_green = 0;
     int old_circle_color;/*前回の色保存用*/
+    int oldCirclePoint;  // 前回の位置保存
+    int nowCirclePoint;  // 現在の位置保存
+    int nextCirclePoint; // 未来の位置保存
+    bool blockMovedFlag = false;
     int flag = 0;
     Walker walker;
+    Explorer explorer;
+    ColorChecker colorChecker;
     PidWalker pidWalker;
     SonarSensor sonarSensor;
     ColorSensor colorSensor;
