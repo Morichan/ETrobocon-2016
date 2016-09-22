@@ -30,7 +30,6 @@
 #include "Pedestrian.h"
 #include "SonarSensor.h"
 #include "SelfLocalMoving.h"
-#include "Puzzle.h"
 
 #if defined(BUILD_MODULE)
 #include "module_cfg.h"
@@ -39,6 +38,7 @@
 #endif
 
 using namespace ev3api;
+void* __dso_handle;
 
 /* Bluetooth */
 int32_t      bt_cmd = 0;      /* Bluetoothコマンド */
@@ -56,7 +56,7 @@ ColorChecker* colorChecker;
 Pedestrian* pedestrian;
 Walker* walker;
 SelfLocalMoving* selfLocalMoving;
-Puzzle* puzzle;
+
 void main_task(intptr_t unused) {
 
     //Area_controlの生成
@@ -71,7 +71,7 @@ void main_task(intptr_t unused) {
     walker = new Walker();
     prizeArea = new PrizeArea();
     selfLocalMoving = new SelfLocalMoving();
-    puzzle = new Puzzle;
+
     /* LCD画面表示 */
     msg_f("ET-Robocon'16 tanakasample", 1);
     msg_f(" create from Katlab-sample.", 2);
@@ -92,7 +92,9 @@ void main_task(intptr_t unused) {
 
     /* 手と尻尾のリセット */
     lifter->reset();
+    lifter->defaultSet(0);
     emoter->reset();
+    emoter->defaultSet(0);
     walker->reset();
 
     /*---------------Main Task from Here ここから---------------*/
@@ -101,11 +103,11 @@ void main_task(intptr_t unused) {
 
     // emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
 
-    selfLocalMoving->moveRCourseStart();
+//    selfLocalMoving->moveRCourseStart();
 
-    puzzle->doPuzzle();
+  //  puzzle->doPuzzle();
 
-    // colorChecker->checkBlockColor();
+     colorChecker->checkBlockColor();
 
     // selfLocalMoving->moveLCourseStart();
 
