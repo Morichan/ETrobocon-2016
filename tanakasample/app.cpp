@@ -31,7 +31,6 @@
 #include "SonarSensor.h"
 #include "SelfLocalMoving.h"
 #include "Puzzle.h"
-#include "Explorer.h"
 
 #if defined(BUILD_MODULE)
 #include "module_cfg.h"
@@ -59,7 +58,6 @@ Pedestrian* pedestrian;
 Walker* walker;
 SelfLocalMoving* selfLocalMoving;
 Puzzle* puzzle;
-Explorer* explorer;
 
 void main_task(intptr_t unused) {
 
@@ -75,8 +73,7 @@ void main_task(intptr_t unused) {
     walker = new Walker();
     prizeArea = new PrizeArea();
     selfLocalMoving = new SelfLocalMoving();
-    puzzle = new Puzzle;
-	explorer = new Explorer();
+    puzzle = new Puzzle();
 
     /* LCD画面表示 */
     msg_f("ET-Robocon'16 tanakasample", 1);
@@ -130,7 +127,7 @@ void main_task(intptr_t unused) {
 
     // selfLocalMoving->moveLCourseStart();
 
-    // colorChecker->hoshitori();
+    //colorChecker->hoshitori();
 
     // pedestrian->monitor();
     // pedestrian->cross(colorChecker->getColor());

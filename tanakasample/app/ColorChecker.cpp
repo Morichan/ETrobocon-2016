@@ -1,61 +1,96 @@
 #include "ColorChecker.h"
 
 ColorChecker::ColorChecker():
-  colorSensor(PORT_2), lifter() {
-  }
+  colorSensor(PORT_2), lifter() {}
+
+void ColorChecker::init(){
+  init_f("ColorChecker");
+}
 
 void ColorChecker::checkBlockColor() {
-
+  int angle = 65,flag=1,count=0;
   walker.reset();
   walker.run(-10,0);
 
+
   while(1){
-    if(walker.get_count_L() <= -60 && walker.get_count_R() <= -60){
+    if(walker.get_count_L() <= -50 && walker.get_count_R() <= -50){
       break;
     }
   }
+
   walker.reset();
-
-  lifter.changeDefault(75);
-
-  walker.run(5,0);
-
   while(1){
+
+    lifter.changeDefault(angle);
     if(colorSensor.getColorNumber() == 2){
-      color_id=2;
+      color_id = 2;
+      msg_f("blue",1);
       break;
-    }
-    if(colorSensor.getColorNumber() == 3){
-      color_id=3;
+    }else if(colorSensor.getColorNumber() == 3){
+      color_id = 3;
+      msg_f("green",1);
       break;
-    }
-    if(colorSensor.getColorNumber() == 4){
-      color_id=4;
+    }else if(colorSensor.getColorNumber() == 4){
+      color_id = 4;
+      msg_f("yellow",1);
       break;
-    }
-    if(colorSensor.getColorNumber() == 5){
-      color_id=5;
+    }else if(colorSensor.getColorNumber() == 5){
+      color_id = 5;
+      msg_f("red",1);
+      break;
+    }else if(colorSensor.getColorNumber() == 0){
+      color_id =1;
+      msg_f("black",1);
+      break;
+    }else if(colorSensor.getColorNumber() != 0){
+      while(1){
+        angle=-5;
+        lifter.changeDefault(angle);
+        clock.sleep(200);
+        count++;
+        if(count>3){
+          msg_f("red",1);
+          color_id = 5;
+          break;
+        }else if (colorSensor.getColorNumber() ==0){
+          msg_f("error",1);
+          break;
+        }
+      }
       break;
     }
   }
-  walker.reset();
-
-  lifter.changeDefault(-75);
-
+  if(count>0){
+    lifter.changeDefault(-65+count*5);
+  }else{
+    lifter.changeDefault(-65);
+  }
   walker.reset();
   walker.run(-10,0);
-
   while(1){
-    if(walker.get_count_L() <= -60 && walker.get_count_R() <= -60){
+    if(walker.get_count_L() <= -90 && walker.get_count_R() <= -90){
+      break;
+    }
+  }
+  pidWalker.setForward(20);
+  pidWalker.pid.setPid(0.5,0.0,2.0,10);
+  while(1){
+    pidWalker.trace();
+    if (colorSensor.getColorNumber() == 2){
+      break;
+    }
+    if (colorSensor.getColorNumber() == 3){
+      break;
+    }
+    if (colorSensor.getColorNumber() == 4){
+      break;
+    }
+    if (colorSensor.getColorNumber() == 5){
       break;
     }
   }
   walker.reset();
-  //    if(blockColor == 2) {
-  //        lifter.changeDefault(45);
-  //    }
-  //    lifter.changeDefault(-45);
-
 }
 void ColorChecker::hoshitori() {
   int count=0,turn=0;
