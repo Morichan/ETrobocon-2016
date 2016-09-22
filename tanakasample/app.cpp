@@ -105,11 +105,11 @@ void main_task(intptr_t unused) {
 
     puzzle->doPuzzle();
 
-    colorChecker->checkBlockColor();
+    // colorChecker->checkBlockColor();
 
     // selfLocalMoving->moveLCourseStart();
 
-    // colorChecker->hoshitori();
+    //colorChecker->hoshitori();
 
     // pedestrian->monitor();
     // pedestrian->cross(colorChecker->getColor());
