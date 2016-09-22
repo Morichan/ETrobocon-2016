@@ -14,9 +14,9 @@ void Explorer::set(int start, int goal){
     nodeList[start]->setState('s');
     nodeList[goal]->setState('g');
 
-    for(int i=0; i<16; i++){
-        nodeList[i]->distance(nodeList[goal]);
-    }
+	for(int i=0; i<16; i++){
+		nodeList[i]->setCost(nodeList[i]->distance(nodeList[goal]));
+	}
 
     startNode = nodeList[start];
     goalNode = nodeList[goal];
@@ -72,5 +72,22 @@ bool Explorer::contains(int num) {
         }
     }
     return false;
+}
+
+//?X?^?[?g?n?_???????ԋ߂??w???̐F?̃m?[?h???T??
+int Explorer::goalExplore(int nowNodeNum, char* color){
+	int goalCost=100;
+	Node* target;
+	int goal=0;
+
+	for(int i=0; i<(int)nodeList.size(); i++){
+		target = nodeList[i];
+		if(target->distance(nodeList[nowNodeNum]) < goalCost && strcmp(color, target->getNodeColor()) == 0 && target->getState() != 'b'){
+			goal = target->getNodeNum();
+			goalCost = target->getCost();
+		}
+	}
+
+	return goal;
 }
 

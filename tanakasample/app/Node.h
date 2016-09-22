@@ -12,17 +12,19 @@ private:
 	char state;
 	vector<int> nextNode;
 	int cost;
+	char nodeColor[8];
 
 public:
 	Node(int num);
 	void setEdge(int nodeNum);
 	void setState(char state);
 	char getState();
-	void distance(Node* goalNode);
+	int distance(Node* node);
 	vector<int> getNextNode();
 	int getNodeNum();
 	int getCost();
-
+	char* getNodeColor();
+	void setCost(int num);
 };
 
 #endif //INC_NODE

@@ -109,6 +109,19 @@ void main_task(intptr_t unused) {
 
     // emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
 
+	//explorerの基本の使い方
+	//スタート＆ゴールの設定
+	//近くのブロックと同じ色のところまで持っていきたいときは
+	//explorer->set(startの番号, explorer->goalExplore(startの番号, 色));
+	//explorer->set(0, 10);
+
+	//explorer->set(0, explorer->goalExplore(0, "green"));
+
+	//ブロックの位置指定
+	//explorer->setBlocks(1,3,6,8);
+	//探索開始
+	//explorer->search();
+
     selfLocalMoving->moveRCourseStart();
 
     puzzle->doPuzzle();
