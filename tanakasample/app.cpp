@@ -31,7 +31,6 @@
 #include "SonarSensor.h"
 #include "SelfLocalMoving.h"
 
-
 #if defined(BUILD_MODULE)
 #include "module_cfg.h"
 #else
@@ -39,6 +38,7 @@
 #endif
 
 using namespace ev3api;
+void* __dso_handle;
 
 /* Bluetooth */
 int32_t      bt_cmd = 0;      /* Bluetoothコマンド */
@@ -92,7 +92,9 @@ void main_task(intptr_t unused) {
 
     /* 手と尻尾のリセット */
     lifter->reset();
+    lifter->defaultSet(0);
     emoter->reset();
+    emoter->defaultSet(0);
     walker->reset();
 
     /*---------------Main Task from Here ここから---------------*/
@@ -101,15 +103,21 @@ void main_task(intptr_t unused) {
 
     // emoter->wipe(100, 5, 90); // 尾が速度100で5回、180度ワイプする
 
-    selfLocalMoving->moveLCourseStart();
+//    selfLocalMoving->moveRCourseStart();
 
-    colorChecker->hoshitori();
+  //  puzzle->doPuzzle();
 
-    pedestrian->monitor();
-    pedestrian->cross(colorChecker->getColor());
-    pedestrian->sumou(colorChecker->getColor());
+     colorChecker->checkBlockColor();
 
-    prizeArea->prizeMode();
+    // selfLocalMoving->moveLCourseStart();
+
+    //colorChecker->hoshitori();
+
+    // pedestrian->monitor();
+    // pedestrian->cross(colorChecker->getColor());
+    // pedestrian->sumou(colorChecker->getColor());
+
+    // prizeArea->prizeMode();
 
     /**********/
     /*Areaとcontrolをここで実行*/

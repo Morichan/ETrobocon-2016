@@ -14,6 +14,7 @@ using namespace ev3api;
 class ColorChecker {
 public:
   ColorChecker();
+  void init();
   void checkBlockColor();
   void hoshitori();
   int8_t getColor();

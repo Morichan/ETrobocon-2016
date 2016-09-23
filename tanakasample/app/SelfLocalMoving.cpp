@@ -1,18 +1,19 @@
 #include "SelfLocalMoving.h"
 
 SelfLocalMoving::SelfLocalMoving():
-    sonarSensor(PORT_3) {
+    sonarSensor(PORT_3),colorSensor(PORT_2){
 }
 
-void SelfLocalMoving::moveLCourseStart() {
-    bool intoFirstCurve = false;
-    bool outFirstCurve = false;
-    bool intoSecondCurve = false;
+void SelfLocalMoving::moveRCourseStart() {
+    // bool intoFirstCurve = false;
+    // bool outFirstCurve = false;
+    // bool intoSecondCurve = false;
     bool intoEdgeChangeCurve = false;
-    bool outEdgeChangeCurve = false;
+    // bool outEdgeChangeCurve = false;
 
 
-    pidWalker.accelerate(1, 70);
+    pidWalker.pid.setPid(0.5, 0.0, 2.0, 30);
+    pidWalker.accelerate(1, 25);
 
     while(1) {
         if(ev3_button_is_pressed(BACK_BUTTON)) {
@@ -27,48 +28,16 @@ void SelfLocalMoving::moveLCourseStart() {
         /*
          * 走行タスクの入力
          */
-        intoFirstCurve = nearTarget(300, 0, 25, 0);
-        outFirstCurve = nearTarget(310, -50, 25, 1);
-        intoSecondCurve = nearTarget(180, -65, 25, 2);
-        intoEdgeChangeCurve = nearTarget(-180, -1, -1, 3);
-        outEdgeChangeCurve = nearTarget(200, 1, 1, 4);
+        /*
+         * intoFirstCurve = nearTarget(300, 0, 25, 0);
+         * outFirstCurve = nearTarget(310, -50, 25, 1);
+         * intoSecondCurve = nearTarget(180, -65, 25, 2);
+         * intoEdgeChangeCurve = nearTarget(-180, -1, -1, 3);
+         * outEdgeChangeCurve = nearTarget(200, 1, 1, 4);
+         */
+        intoEdgeChangeCurve = nearTarget(8.0, -1, 1, 0);
 
-        if(intoFirstCurve) {
-            ev3_speaker_play_tone(NOTE_E5, 20);
-            pidWalker.pid.setPid(0.8, 0.0, 5.0, 30);
-            pidWalker.brake(0, 30);
-        }
-
-        if(outFirstCurve) {
-            ev3_speaker_play_tone(NOTE_E5, 20);
-            pidWalker.accelerate(0, 70);
-            pidWalker.pid.setPid(1.0, 0.0, 5.0, 30);
-        }
-
-        if(intoSecondCurve) {
-            ev3_speaker_play_tone(NOTE_E5, 20);
-            pidWalker.pid.setPid(0.5, 0.0, 2.0, 30);
-            pidWalker.brake(0, 45);
-        }
-
-        if(intoEdgeChangeCurve) {
-            ev3_speaker_play_tone(NOTE_E5, 20);
-            pidWalker.pid.setPid(0.5, 0.0, 0.8, 30);
-            pidWalker.brake(0, 10);
-            pidWalker.walker.edgeChange();
-            edge_direction = -1;
-            pidWalker.accelerate(0, 40);
-            pidWalker.pid.setPid(1.0, 0.0, 5.0, 30);
-        }
-
-        if(outEdgeChangeCurve) {
-            ev3_speaker_play_tone(NOTE_E5, 20);
-            pidWalker.pid.setPid(0.5, 0.0, 0.8, 30);
-            pidWalker.brake(0, 10);
-            pidWalker.walker.edgeChange();
-            edge_direction = 1;
-            pidWalker.accelerate(0, 40);
-            pidWalker.pid.setPid(1.0, 0.0, 2.0, 30);
+        if(intoEdgeChangeCurve){
             break;
         }
 
@@ -76,6 +45,24 @@ void SelfLocalMoving::moveLCourseStart() {
         self_localization.writing_angle(fp4);
 
     }
+
+    while(colorSensor.getColorNumber() != 6) {
+        pidWalker.trace();
+    }
+    ev3_speaker_play_tone(NOTE_E5, 20);
+    walker.run(25,0);
+    clock.sleep(600);
+
+    while(colorSensor.getColorNumber()!= 1) {
+        /*自己位置のデータ更新*/
+        self_localization.update(edge_direction);
+        /*①基準地の更新*/
+        self_localization.standard_point(6);//基準値を6point離れるごとに更新
+
+        walker.run(25,0);
+    }
+
+    walker.angleChange(45,-1);
 
     fclose(fp);
     fclose(fp2);
