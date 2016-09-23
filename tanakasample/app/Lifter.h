@@ -13,6 +13,7 @@ public:
   Lifter();
   void liftUp();
   void liftDown();
+  void liftUpDownGradually(int pwm);
   void changeDefault(int angle);
   void defaultSet(int angle);
   void init();

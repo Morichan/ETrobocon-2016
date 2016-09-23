@@ -28,7 +28,7 @@ public:
 	void setBlocks(int p1, int p2, int p3, int p4);
     int getRoot(int i);
     size_t getSize();
-	int goalExplore(int nowNodeNum, char* color);
+	int goalExplore(int nowNodeNum, const char* color);
     bool contains(int num);
 
 };

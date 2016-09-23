@@ -20,6 +20,7 @@ public:
     void brake(int8_t startForward, int8_t _forward);
     void setForward(int8_t _forward);
     void trace();
+    void moveAngle(int pwm);
     Pid pid;
     Walker walker;
 

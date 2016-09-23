@@ -15,7 +15,9 @@ class ColorChecker {
 public:
   ColorChecker();
   void init();
-  void checkBlockColor();
+  void checkBlockColor(int);
+  void checkColorUpGradually(int);
+  void checkColorDefault();
   void hoshitori();
   int8_t getColor();
 private:

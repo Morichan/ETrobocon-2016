@@ -19,6 +19,10 @@ void Lifter::reset() {
     liftHand.setBrake(false);
 }
 
+void Lifter::liftUpDownGradually(int pwm) {
+    liftHand.setPWM(pwm);
+}
+
 void Lifter::liftUp() {
     liftHand.setPWM(20);
     clock.sleep(1000);

@@ -131,3 +131,21 @@ void PidWalker::trace() {
 
     clock.sleep(4); /* 4msec周期起動 */
 }
+
+void PidWalker::moveAngle(int angle) {
+    int defaultAngleL = walker.get_count_L();
+    int defaultAngleR = walker.get_count_R();
+
+    if(angle > 0) {
+        while(walker.get_count_L() - defaultAngleL < angle &&
+                walker.get_count_R() - defaultAngleR < angle) {
+            trace();
+        }
+    } else {
+        while(walker.get_count_L() - defaultAngleL > -angle &&
+                walker.get_count_R() - defaultAngleR > -angle) {
+            trace();
+        }
+    }
+}
+

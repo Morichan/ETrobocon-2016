@@ -95,9 +95,7 @@ void main_task(intptr_t unused) {
 
     /* 手と尻尾のリセット */
     lifter->reset();
-    lifter->defaultSet(0);
     emoter->reset();
-    emoter->defaultSet(0);
     walker->reset();
 
     /*---------------Main Task from Here ここから---------------*/
@@ -122,8 +120,6 @@ void main_task(intptr_t unused) {
     selfLocalMoving->moveRCourseStart();
 
     puzzle->doPuzzle();
-
-    colorChecker->checkBlockColor();
 
     // selfLocalMoving->moveLCourseStart();
 

@@ -88,6 +88,18 @@ void Self_localization::constructor_make(){
     y_now = 0;
 }
 
+
+/*座標を代入*/
+void Self_localization::set_current_xy(int target,float xy){
+    if (target == 1) {
+        current_x = xy;
+    }else if(target == -1){
+        current_y = xy;
+    }else{
+    current_angle = xy;
+    }
+}
+
 /*自己位置の値を更新*/
 /*
  edge_direction:右->1

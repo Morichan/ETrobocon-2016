@@ -7,21 +7,149 @@ void ColorChecker::init(){
   init_f("ColorChecker");
 }
 
-void ColorChecker::checkBlockColor() {
-  int angle = 65,flag=1,count=0;
+void ColorChecker::checkBlockColor(int exceptionColor) {
   walker.reset();
   walker.run(-10,0);
 
 
   while(1){
-    if(walker.get_count_L() <= -50 && walker.get_count_R() <= -50){
+      clock.sleep(4);
+    if(walker.get_count_L() <= -40 && walker.get_count_R() <= -40){
       break;
     }
   }
 
   walker.reset();
-  while(1){
+  checkColorUpGradually(exceptionColor);
 
+  walker.reset();
+  walker.run(-10,0);
+  while(1){
+      clock.sleep(4);
+    if(walker.get_count_L() <= -100 && walker.get_count_R() <= -100){
+      break;
+    }
+  }
+  // pidWalker.setForward(20);
+  // pidWalker.pid.setPid(0.5,0.0,2.0,10);
+  // while(1){
+  //   pidWalker.trace();
+  //   if (colorSensor.getColorNumber() == 2){
+  //     break;
+  //   }
+  //   if (colorSensor.getColorNumber() == 3){
+  //     break;
+  //   }
+  //   if (colorSensor.getColorNumber() == 4){
+  //     break;
+  //   }
+  //   if (colorSensor.getColorNumber() == 5){
+  //     break;
+  //   }
+  // }
+  walker.reset();
+}
+
+void ColorChecker::checkColorUpGradually(int __exceptionColor) {
+    int pwm = 10;
+    lifter.liftUpDownGradually(pwm);
+
+    for(int i = 0; i < 300; ++i) {
+        clock.sleep(4);
+
+        if(__exceptionColor == 2) {
+            // if(colorSensor.getColorNumber() == 2){
+            //     color_id = -1;
+            //     msg_f("blue, but no move",1);
+            //     break;
+            // }else if(colorSensor.getColorNumber() == 3){
+            if(colorSensor.getColorNumber() == 3){
+                color_id = 3;
+                msg_f("green",1);
+                break;
+            }else if(colorSensor.getColorNumber() == 4){
+                color_id = 4;
+                msg_f("yellow",1);
+                break;
+            }else if(colorSensor.getColorNumber() == 5){
+                color_id = 5;
+                msg_f("red",1);
+                break;
+            } else {
+                color_id = 1;
+                msg_f("black",1);
+            }
+        } else if(__exceptionColor == 3) {
+            if(colorSensor.getColorNumber() == 2){
+                color_id = 2;
+                msg_f("blue",1);
+                break;
+            // }else if(colorSensor.getColorNumber() == 3){
+            //     color_id = -1;
+            //     msg_f("green, but no move",1);
+            //     break;
+            }else if(colorSensor.getColorNumber() == 4){
+                color_id = 4;
+                msg_f("yellow",1);
+                break;
+            }else if(colorSensor.getColorNumber() == 5){
+                color_id = 5;
+                msg_f("red",1);
+                break;
+            } else {
+                color_id = 1;
+                msg_f("black",1);
+            }
+        } else if(__exceptionColor == 4) {
+            if(colorSensor.getColorNumber() == 2){
+                color_id = 2;
+                msg_f("blue",1);
+                break;
+            }else if(colorSensor.getColorNumber() == 3){
+                color_id = 3;
+                msg_f("green",1);
+                break;
+            // }else if(colorSensor.getColorNumber() == 4){
+            //     color_id = -1;
+            //     msg_f("yellow, but no move",1);
+            //     break;
+            }else if(colorSensor.getColorNumber() == 5){
+                color_id = 5;
+                msg_f("red",1);
+                break;
+            } else {
+                color_id = 1;
+                msg_f("black",1);
+            }
+        } else if(__exceptionColor == 5) {
+            if(colorSensor.getColorNumber() == 2){
+                color_id = 2;
+                msg_f("blue",1);
+                break;
+            }else if(colorSensor.getColorNumber() == 3){
+                color_id = 3;
+                msg_f("green",1);
+                break;
+            }else if(colorSensor.getColorNumber() == 4){
+                color_id = 4;
+                msg_f("yellow",1);
+                break;
+            // }else if(colorSensor.getColorNumber() == 5){
+            //     color_id = -1;
+            //     msg_f("red, but no move",1);
+            //     break;
+            } else {
+                color_id = 1;
+                msg_f("black",1);
+            }
+        }
+    }
+    lifter.defaultSet(0);
+}
+
+void ColorChecker::checkColorDefault() {
+  int angle = 65,count=0;
+  while(1) {
     lifter.changeDefault(angle);
     if(colorSensor.getColorNumber() == 2){
       color_id = 2;
@@ -58,7 +186,6 @@ void ColorChecker::checkBlockColor() {
           break;
         }
       }
-      break;
     }
   }
   if(count>0){
@@ -66,31 +193,6 @@ void ColorChecker::checkBlockColor() {
   }else{
     lifter.changeDefault(-65);
   }
-  walker.reset();
-  walker.run(-10,0);
-  while(1){
-    if(walker.get_count_L() <= -90 && walker.get_count_R() <= -90){
-      break;
-    }
-  }
-  pidWalker.setForward(20);
-  pidWalker.pid.setPid(0.5,0.0,2.0,10);
-  while(1){
-    pidWalker.trace();
-    if (colorSensor.getColorNumber() == 2){
-      break;
-    }
-    if (colorSensor.getColorNumber() == 3){
-      break;
-    }
-    if (colorSensor.getColorNumber() == 4){
-      break;
-    }
-    if (colorSensor.getColorNumber() == 5){
-      break;
-    }
-  }
-  walker.reset();
 }
 void ColorChecker::hoshitori() {
   int count=0,turn=0;

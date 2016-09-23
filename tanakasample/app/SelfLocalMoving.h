@@ -14,14 +14,13 @@ class SelfLocalMoving {
 public:
     SelfLocalMoving();
     void moveRCourseStart();
+    void moveRCourseToGoal(int pattern, int puzzle_dege);
     bool nearTarget(int _x, int _y, int _r, int _flag);
 
 private:
-    
     Walker walker;
     Clock clock;
     PidWalker pidWalker;
-    
     SonarSensor sonarSensor;
     ColorSensor colorSensor;
     Self_localization self_localization;
@@ -31,6 +30,8 @@ private:
     FILE* fp4 = fopen("angle.txt", "w");
     int edge_direction = -1; // エッジの向きによって変更(+ => 右, - => 左)
     int flag_edge = 0;     // フラグ
+    int set_edge = 0;
+    float start_point;
 };
 
 #endif

@@ -27,19 +27,29 @@ void Puzzle::doPuzzle(){
      *  |        |        |        |      |
      * 15 ----- 11 ------ 7 ------ 3    start
      */
-    int setRoot[2] = {4, 8};
-    int maxRoot = 2;
-    int blocks[4];
-    blocks[0] = 5;
-    blocks[1] = 14;
-    blocks[2] = 13;
-    blocks[3] = 3;
 
-    int blackBlockFlag = false; // 黒ブロックを動かしたかフラグ
+    // ブロックの位置を指定してね
+    // ちなみにこの順番で攻略していくよ
+    // 0にブロックがある時は必ずblocks[0]に入れてね
+    int blocks[4];
+    blocks[0] = 0;
+    blocks[1] = 3;
+    blocks[2] = 15;
+    blocks[3] = 12;
+
+    int mv = -1;
+    int setRoot[8] = {blocks[0], mv, blocks[1], mv, blocks[2], mv, blocks[3], mv};
+    int maxRoot = 8;
+    blockMovedCount = 0;
+
+    bool blackBlockFlag = false; // 黒ブロックを動かしたかフラグ
+    bool notMovedFlag = false;
+    int blockMovedPlace = -1;
+    int rootCount;
 
     pidWalker.walker.edgeChange();
-    pidWalker.pid.setPid(0.4, 0.0, 2.0, 30);
-    pidWalker.setForward(20);
+    pidWalker.pid.setPid(0.4, 0.0, 1.0, 30);
+    pidWalker.setForward(15);
 
     /*
      * 色を検知したら色の値をとって次に進む
@@ -47,48 +57,279 @@ void Puzzle::doPuzzle(){
      */
     goAheadNode();
 
+    veryOldCirclePoint = 1;
     oldCirclePoint = 1;
     nowCirclePoint = 0;
 
+    /*
+     * Rコース難所
+     * ブロックを検知し移動させる
+     */
     for(int i = 0; i < maxRoot; ++i) {
-        int rootCount = 1;
+        rootCount = 1;
         int start = nowCirclePoint;
         int goal = setRoot[i];
+        blockColor = 0;
+        blockMovingFlag = true;
 
         // explorer.set(0, 9);                 // スタート＆ゴールの設定
         // explorer.setBlocks(4, 2, 7, 14);    // ブロックの位置指定
         // explorer.search();                  // 探索開始
         // std::size_t s = explorer.getsize(); // 探索に必要なサイズを返す
         // int r = explorer.getRoot(3)         // 3番目に移動すべきノードを返す
-        explorer.set(start, goal);
-        explorer.setBlocks(blocks[0], blocks[1], blocks[2], blocks[3]);
-        explorer.search();
+        // 近くのブロックと同じ色のところまで持っていきたいときは
+        // explorer->set(startの番号, explorer->goalExplore(startの番号, 色));
+        // explorer->set(0, explorer->goalExplore(0, "green"));
 
-        for(std::size_t j = 0, rootSize = explorer.getSize();
-                j < rootSize; ++j) {
-            nextCirclePoint = explorer.getRoot(rootCount);
+        if(blockMovedCount == 0 && blocks[0] == 0) {
+            ++i;
+        }
 
-            goNextPoint();
+        /*
+         * ブロックの場所まで移動
+         */
+        if(setRoot[i] >= 0 && !(blockMovedCount == 0 && blocks[0] == 0)) {
+            ev3_speaker_play_tone(NOTE_E5, 20);
+
+            explorer.set(goal, start);
+            explorer.setBlocks(blocks[0], blocks[1], blocks[2], blocks[3]);
+            explorer.search();
+            // ブロックを前回動かしていたらその位置を更新
+            if(blockMovedPlace >= 0) {
+                blocks[blockMovedCount - 1] = blockMovedPlace;
+            }
+
+            /*
+             * ブロックの場所まで移動する
+             * Explorer::search()はブロックの存在する場所までを検索できない
+             * だからブロックの存在する場所"から"現在の場所までを検索し
+             * ルートをひっくり返す必要がある
+             */
+            for(std::size_t j=1, rootSize = explorer.getSize(); j < rootSize; ++j) {
+                // 斜め移動の走る距離を変更
+                if(backedFlag) {
+                    midTrace = 100;
+                    backedFlag = false;
+                }
+
+                nextCirclePoint = explorer.getRoot((int)rootSize - rootCount - 1);
+                goNextPoint();
+                goAheadNode();
+                midTrace = 200;
+                rootCount++;
+            }
+
+            /*
+             * ブロックを運搬
+             */
+        } else {
+            colorChecker.checkBlockColor(currentCircleColor);
+            int8_t blockColor = colorChecker.getColor();
+            if(blockColor == 2) {
+                explorer.set(start, explorer.goalExplore(start, "blue"));
+            } else if(blockColor == 3) {
+                explorer.set(start, explorer.goalExplore(start, "green"));
+            } else if(blockColor == 4) {
+                explorer.set(start, explorer.goalExplore(start, "yellow"));
+            } else if(blockColor == 5) {
+                explorer.set(start, explorer.goalExplore(start, "red"));
+            } else { // 黒 or 下の色と同じもの
+                // if(blockColor == 1) {
+                //     blackBlockFlag = false;
+                // }
+                nextCirclePoint =
+                    nextPointAsBlockIsNow(blocks[0], blocks[1], blocks[2], blocks[3]);
+                goNextPoint();
+                goAheadNode();
+                notMovedFlag = true;
+                blockMovedPlace = -1;
+                blockMovedCount++;
+                continue;
+            }
+            notMovedFlag = false;
+
+            explorer.setBlocks(blocks[0], blocks[1], blocks[2], blocks[3]);
+            explorer.search();
             goAheadNode();
 
-            blockMovedFlag = false;
-            rootCount++;
+            for(std::size_t j=1, rootSize = explorer.getSize(); j < rootSize; ++j) {
+                nextCirclePoint = explorer.getRoot(rootCount);
+                goNextPoint();
+                goAheadNode();
+                rootCount++;
+            }
+            // ブロックの場所を更新するための変数を保持
+            blockMovedPlace = nowCirclePoint;
+            blockMovedCount++;
+
+            // 通称Walker::backMoveAngle()
+            int defaultCountL = pidWalker.walker.get_count_L();
+            pidWalker.walker.run(-20, 0);
+            while(defaultCountL - pidWalker.walker.get_count_L() < 150) {
+                clock.sleep(4);
+            }
+            pidWalker.walker.reset();
+            backedFlag = true;
+            // リフターを初期値に直す
+            lifter.liftUp();
+            lifter.defaultSet(0);
         }
 
         // ブロック3つ動かしたが、黒を検知してない時はもうゴールしてもいいよね？
-        if(i == 2 && blackBlockFlag == true) {
+        if(blockMovedCount == 3 && blackBlockFlag == true) {
             break;
         }
-        if(i % 2 == 0 && i != 0) {
-            blockMovedFlag = true;
-            int32_t defaultCount = pidWalker.walker.get_count_L();
-            while(defaultCount - pidWalker.walker.get_count_L() < 60) {
-                pidWalker.walker.run(-20, 0);
-                clock.sleep(4);
-            }
-        }
-        ev3_speaker_play_tone(NOTE_E5, 20);
     }
+
+    if(!notMovedFlag) {
+        nextCirclePoint =
+            nextPointAsBlockIsNow(blocks[0], blocks[1], blocks[2], blocks[3]);
+        goNextPoint();
+        goAheadNode();
+    }
+
+    int nearistGoal = 12;
+    if(blockMovedPlace >= 0) {
+        blocks[3] = blockMovedPlace;
+    }
+
+    /*
+     * ゴールまでの線に最も近いノードを選択
+     * 移動はしているから全てが12~15の何処かにあるということはないはず
+     */
+    for(int i = 0; i < 4; ++i) {
+        if(blocks[0] != i + 12 && blocks[1] != i + 12 &&
+                blocks[2] != i + 12 && blocks[3] != i + 12) {
+            nearistGoal = i + 12;
+            break;
+        }
+    }
+
+    explorer.set(nowCirclePoint, nearistGoal);
+    explorer.setBlocks(blocks[0], blocks[1], blocks[2], blocks[3]);
+    explorer.search();
+
+    rootCount = 1;
+    for(std::size_t j=1, rootSize = explorer.getSize(); j < rootSize; ++j) {
+        nextCirclePoint = explorer.getRoot(rootCount);
+        goNextPoint();
+        goAheadNode();
+        rootCount++;
+    }
+
+    if(nowCirclePoint - oldCirclePoint == -1) {
+        pidWalker.walker.angleChange(90, 1);
+    } else if(nowCirclePoint - oldCirclePoint == 1) {
+        pidWalker.walker.angleChange(90, -1);
+    }
+    while(colorSensor.getColorNumber() != 1) {
+        pidWalker.walker.run(30, 0);
+        clock.sleep(4);
+    }
+
+    pidWalker.walker.moveAngle(20, 60);
+    pidWalker.walker.angleChange(90, -1);
+}
+
+int Puzzle::nextPointAsBlockIsNow(int b1, int b2, int b3, int b4) {
+    int nowPoint  = nowCirclePoint  - oldCirclePoint;
+    int nex[6] = {};
+    int next = 0;
+    int max = 0;
+
+    if(nowPoint == 4) {
+        if(nowCirclePoint % 4 == 0) {
+            nex[0] = nowCirclePoint - 4;
+            nex[1] = nowCirclePoint + 1;
+            nex[2] = nowCirclePoint - 3;
+            max = 3;
+        } else if((nowCirclePoint + 1) % 4 == 0) {
+            nex[0] = nowCirclePoint - 4;
+            nex[1] = nowCirclePoint - 1;
+            nex[2] = nowCirclePoint - 5;
+            max = 3;
+        } else {
+            nex[0] = nowCirclePoint - 4;
+            nex[1] = nowCirclePoint + 1;
+            nex[2] = nowCirclePoint - 1;
+            nex[3] = nowCirclePoint - 3;
+            nex[4] = nowCirclePoint - 5;
+            max = 5;
+        }
+    } else if(nowPoint == -4) {
+        if(nowCirclePoint % 4 == 0) {
+            nex[0] = nowCirclePoint + 4;
+            nex[1] = nowCirclePoint + 1;
+            nex[2] = nowCirclePoint + 5;
+            max = 3;
+        } else if((nowCirclePoint + 1) % 4 == 0) {
+            nex[0] = nowCirclePoint + 4;
+            nex[1] = nowCirclePoint - 1;
+            nex[2] = nowCirclePoint + 3;
+            max = 3;
+        } else {
+            nex[0] = nowCirclePoint + 4;
+            nex[1] = nowCirclePoint + 1;
+            nex[2] = nowCirclePoint - 1;
+            nex[3] = nowCirclePoint + 3;
+            nex[4] = nowCirclePoint + 5;
+            max = 5;
+        }
+    } else if(nowPoint == 1) {
+        if(nowCirclePoint >= 12) {
+            nex[0] = nowCirclePoint - 1;
+            nex[1] = nowCirclePoint - 4;
+            nex[2] = nowCirclePoint - 5;
+            max = 3;
+        } else if(nowCirclePoint < 4) {
+            nex[0] = nowCirclePoint - 1;
+            nex[1] = nowCirclePoint + 4;
+            nex[2] = nowCirclePoint + 3;
+            max = 3;
+        } else {
+            nex[0] = nowCirclePoint - 1;
+            nex[1] = nowCirclePoint - 4;
+            nex[2] = nowCirclePoint + 4;
+            nex[3] = nowCirclePoint + 3;
+            nex[4] = nowCirclePoint - 5;
+            max = 5;
+        }
+    } else if(nowPoint == -1) {
+        if(nowCirclePoint >= 12) {
+            nex[0] = nowCirclePoint + 1;
+            nex[1] = nowCirclePoint - 4;
+            nex[2] = nowCirclePoint - 3;
+            max = 3;
+        } else if(nowCirclePoint < 4) {
+            nex[0] = nowCirclePoint + 1;
+            nex[1] = nowCirclePoint + 4;
+            nex[2] = nowCirclePoint + 5;
+            max = 3;
+        } else {
+            nex[0] = nowCirclePoint + 1;
+            nex[1] = nowCirclePoint - 4;
+            nex[2] = nowCirclePoint + 4;
+            nex[3] = nowCirclePoint - 3;
+            nex[4] = nowCirclePoint + 5;
+            max = 5;
+        }
+    }
+
+    for(int i = 0; i < max; i++) {
+        if(isThereBlock(b1, b2, b3, b4, nex[i])) {
+            next = nex[i];
+            break;
+        }
+    }
+
+    return next;
+}
+
+bool Puzzle::isThereBlock(int b1, int b2, int b3, int b4, int block) {
+    if((b1 != block) && (b2 != block) && (b3 != block) && (b4 != block)) {
+        return true;
+    }
+    return false;
 }
 
 void Puzzle::goNextPoint() {
@@ -181,6 +422,8 @@ void Puzzle::goNextPoint() {
         }
     }
 
+    // 前回の位置と今回の位置を更新
+    veryOldCirclePoint = nowCirclePoint;
     if(nextPoint % 4 == 0 || nextPoint == 1 || nextPoint == -1) {
         oldCirclePoint = nowCirclePoint;
     } else {
@@ -219,6 +462,7 @@ void Puzzle::goAheadNode() {
             break;
         }
     }
+    pidWalker.walker.reset();
 }
 
 void Puzzle::goLeftEdge() {
@@ -240,19 +484,19 @@ void Puzzle::goRightEdge() {
 }
 
 void Puzzle::goFrontEdge() {
-    if(blockMovedFlag) {
-        pidWalker.walker.angleChange(45, 1);
-        pidWalker.walker.moveAngle(20, 360);
-        pidWalker.walker.angleChange(90, -1);
-        pidWalker.walker.moveAngle(20, 180);
-        while(colorSensor.getColorNumber() != -1) {
-            pidWalker.walker.run(20, 0);
-        }
-        pidWalker.walker.moveAngle(20, 100);
-        pidWalker.walker.angleChange(45, 1);
-    } else {
+    //if(blockMovingFlag) {
         pidWalker.walker.moveAngle(20, 150);
-    }
+    // } else {
+    //     pidWalker.walker.angleChange(45, 1);
+    //     pidWalker.walker.moveAngle(20, 360);
+    //     pidWalker.walker.angleChange(90, -1);
+    //     pidWalker.walker.moveAngle(20, 180);
+    //     while(colorSensor.getColorNumber() != -1) {
+    //         pidWalker.walker.run(20, 0);
+    //     }
+    //     pidWalker.walker.moveAngle(20, 100);
+    //     pidWalker.walker.angleChange(45, 1);
+    // }
 }
 
 void Puzzle::goBackEdge() {
@@ -269,11 +513,8 @@ void Puzzle::goBackEdge() {
 }
 
 void Puzzle::goLowRightEdge() {
-    int32_t i;
     goRightEdge();
-    for(i = 0; i < 200; i++) {
-        pidWalker.trace();
-    }
+    pidWalker.moveAngle(midTrace);
     pidWalker.walker.angleChange(45, -1);
     while(colorSensor.getColorNumber() != 1) {
         pidWalker.walker.run(20, 0);
@@ -284,11 +525,8 @@ void Puzzle::goLowRightEdge() {
 }
 
 void Puzzle::goUpRightEdge() {
-    int32_t i;
     goRightEdge();
-    for(i = 0; i < 200; i++) {
-        pidWalker.trace();
-    }
+    pidWalker.moveAngle(midTrace);
     pidWalker.walker.angleChange(45, 1);
     while(colorSensor.getColorNumber() != 1) {
         pidWalker.walker.run(20, 0);
@@ -299,11 +537,8 @@ void Puzzle::goUpRightEdge() {
 }
 
 void Puzzle::goLowLeftEdge() {
-    int32_t i;
     goLeftEdge();
-    for(i = 0; i < 200; i++) {
-        pidWalker.trace();
-    }
+    pidWalker.moveAngle(midTrace);
     pidWalker.walker.angleChange(45, 1);
     while(colorSensor.getColorNumber() != 1) {
         pidWalker.walker.run(20, 0);
@@ -314,11 +549,8 @@ void Puzzle::goLowLeftEdge() {
 }
 
 void Puzzle::goUpLeftEdge() {
-    int32_t i;
     goLeftEdge();
-    for(i = 0; i < 200; i++) {
-        pidWalker.trace();
-    }
+    pidWalker.moveAngle(midTrace);
     pidWalker.walker.angleChange(45, -1);
     while(colorSensor.getColorNumber() != 1) {
         pidWalker.walker.run(20, 0);

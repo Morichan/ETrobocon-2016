@@ -64,7 +64,7 @@ public:
     int line_target_coordinates(int target_line,int target_axis,int updown);
     /*①基準となる座標の指定*/
     int standard_point(int distance);
-    
+    void set_current_xy(int target,float xy);
     
     //ファイル書き出し,画面出力
     void writing_current_coordinates(FILE*);

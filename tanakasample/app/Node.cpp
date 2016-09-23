@@ -2,7 +2,7 @@
 #include"Node.h"
 #include<string.h>
 
-//ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 Node::Node(int num){
 	state = '*';
 	nodeNum = num;
@@ -18,7 +18,7 @@ Node::Node(int num){
 	}
 }
 
-//ŽüˆÍ‚Ìƒm[ƒh‚ÌÝ’è
+//å‘¨å›²ã®ãƒŽãƒ¼ãƒ‰ã®è¨­å®š
 void Node::setEdge(int nodeNum){
 	int target = nodeNum-5;
 
@@ -29,7 +29,7 @@ void Node::setEdge(int nodeNum){
 		nextNode.push_back(target+i);
 	}
 
-	//—×‚è‡‚í‚È‚¢ƒm[ƒh‚Ì”rœ
+	//éš£ã‚Šåˆã‚ãªã„ãƒŽãƒ¼ãƒ‰ã®æŽ’é™¤
 	if(nextNode[0]%4 == 3 || nextNode[3]==-1 || nextNode[0] == -1){
 		nextNode[0] = nextNode[3] = nextNode[5] = -1;
 	}
@@ -57,7 +57,7 @@ char Node::getState(){
 	return state;
 }
 
-//”CˆÓ‚Ìƒm[ƒh‚Ü‚Å‚Ì‹——£‚ÌŒvŽZ
+//ä»»æ„ã®ãƒŽãƒ¼ãƒ‰ã¾ã§ã®è·é›¢ã®è¨ˆç®—
 int Node::distance(Node* node){
 	int x = (nodeNum%4 - node->nodeNum%4)*(nodeNum%4 - node->nodeNum%4);
 	int y = (nodeNum/4 - node->nodeNum/4)*(nodeNum/4 - node->nodeNum/4);
@@ -78,7 +78,7 @@ int Node::getCost(){
 }
 
 char* Node::getNodeColor(){
-	return nodeColor; 
+	return nodeColor;
 }
 
 void Node::setCost(int num){
