@@ -63,7 +63,7 @@ void SelfLocalMoving::moveRCourseStart() {
     }
 
     walker.angleChange(45,-1);
-    walker.angleChange(25,-1);
+    walker.angleChange(5,-1);
 
     fclose(fp);
     fclose(fp2);
