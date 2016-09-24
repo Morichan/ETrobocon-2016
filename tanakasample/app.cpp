@@ -121,7 +121,7 @@ void main_task(intptr_t unused) {
 
     puzzle->doPuzzle();
 
-    // selfLocalMoving->moveLCourseStart();
+    selfLocalMoving->moveRCourseToGoal(0, puzzle->nextStartPoint());
 
     //colorChecker->hoshitori();
 

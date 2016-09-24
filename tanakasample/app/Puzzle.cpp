@@ -32,10 +32,10 @@ void Puzzle::doPuzzle(){
     // ちなみにこの順番で攻略していくよ
     // 0にブロックがある時は必ずblocks[0]に入れてね
     int blocks[4];
-    blocks[0] = 0;
-    blocks[1] = 3;
-    blocks[2] = 15;
-    blocks[3] = 12;
+    blocks[0] = 1;
+    blocks[1] = 6;
+    blocks[2] = 12;
+    blocks[3] = 14;
 
     int mv = -1;
     int setRoot[8] = {blocks[0], mv, blocks[1], mv, blocks[2], mv, blocks[3], mv};
@@ -97,6 +97,21 @@ void Puzzle::doPuzzle(){
             // ブロックを前回動かしていたらその位置を更新
             if(blockMovedPlace >= 0) {
                 blocks[blockMovedCount - 1] = blockMovedPlace;
+            }
+
+            /*
+             * ブロックを挟んで次の場所に行くのを防ぐ
+             */
+            if(nowCirclePoint - oldCirclePoint ==
+                    explorer.getRoot(explorer.getSize() - 2) - nowCirclePoint) {
+                nextCirclePoint =
+                    nextPointAsBlockIsNow(blocks[0], blocks[1], blocks[2], blocks[3]);
+                goNextPoint();
+                goAheadNode();
+                explorer.set(goal, nowCirclePoint);
+                explorer.setBlocks(blocks[0], blocks[1], blocks[2], blocks[3]);
+                explorer.search();
+                backedFlag = false;
             }
 
             /*
@@ -218,9 +233,35 @@ void Puzzle::doPuzzle(){
     }
 
     if(nowCirclePoint - oldCirclePoint == -1) {
+        pidWalker.walker.moveAngle(20, 180);
         pidWalker.walker.angleChange(90, 1);
+        if(nowCirclePoint == 12) {
+            selfLocalizationStart = 2;
+        } else if(nowCirclePoint == 13) {
+            selfLocalizationStart = 4;
+        } else {
+            selfLocalizationStart = 6;
+        }
     } else if(nowCirclePoint - oldCirclePoint == 1) {
+        pidWalker.walker.moveAngle(20, 180);
         pidWalker.walker.angleChange(90, -1);
+        if(nowCirclePoint == 13) {
+            selfLocalizationStart = 2;
+        } else if(nowCirclePoint == 14) {
+            selfLocalizationStart = 4;
+        } else {
+            selfLocalizationStart = 6;
+        }
+    } else {
+        if(nowCirclePoint == 12) {
+            selfLocalizationStart = 1;
+        } else if(nowCirclePoint == 13) {
+            selfLocalizationStart = 3;
+        } else if(nowCirclePoint == 14) {
+            selfLocalizationStart = 5;
+        } else {
+            selfLocalizationStart = 7;
+        }
     }
     while(colorSensor.getColorNumber() != 1) {
         pidWalker.walker.run(30, 0);
@@ -229,6 +270,10 @@ void Puzzle::doPuzzle(){
 
     pidWalker.walker.moveAngle(20, 60);
     pidWalker.walker.angleChange(90, -1);
+}
+
+int Puzzle::nextStartPoint() {
+    return selfLocalizationStart;
 }
 
 int Puzzle::nextPointAsBlockIsNow(int b1, int b2, int b3, int b4) {

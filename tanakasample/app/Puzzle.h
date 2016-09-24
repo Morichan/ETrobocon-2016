@@ -20,6 +20,7 @@ public:
     Puzzle();
     void runOneBlock();
     void doPuzzle();
+    int nextStartPoint();
     int nextPointAsBlockIsNow(int b1, int b2, int b3, int b4);
     bool isThereBlock(int b1, int b2, int b3, int b4, int block);
     void turn90InCircle();
@@ -36,6 +37,7 @@ public:
     void goUpLeftEdge();
 
 private:
+    int selfLocalizationStart = 1;
     int currentCircleColor;
     int count_red = 0;
     int count_blue = 0;
